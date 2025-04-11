@@ -295,3 +295,24 @@ def import_excel(request):
             return redirect('import_excel')
 
     return render(request, 'myapp/import_excel.html')
+# تصدير بيانات إلى Excel
+def export_excel(request):
+    products = Product.objects.all()
+    data = {'اسم المنتج': [], 'رمز المنتج': [], 'الكمية': [], 'الوحدة': [], 'الحد الأدنى': []}
+    for product in products:
+        data['اسم المنتج'].append(product.product_name)
+        data['رمز المنتج'].append(product.product_code)
+        data['الكمية'].append(product.quantity)
+        data['الوحدة'].append(product.unit)
+        data['الحد الأدنى'].append(product.min_stock)
+
+    df = pd.DataFrame(data)
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="inventory.xlsx"'
+    df.to_excel(response, index=False)
+    return response
+
+def clear_products(request):
+    Product.objects.all().delete()
+    messages.success(request, 'تم مسح جميع المنتجات بنجاح.')
+    return redirect('import_excel')
