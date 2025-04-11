@@ -115,6 +115,10 @@ def chart_view(request):
     return render(request, 'graph.html', {'graph': image_data})
 
 def add_quantity(request):
+    print("=== تم تنفيذ POST للإضافة ===")
+    print(f"ID المنتج: {request.POST.get('product_id')}")
+    print(f"الكمية المطلوب إضافتها: {request.POST.get('quantity_to_add')}")
+
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
         quantity_to_add = request.POST.get('quantity_to_add')
@@ -127,10 +131,8 @@ def add_quantity(request):
             return render(request, 'myapp/add_quantity.html', {'error': f'الكمية يجب أن تكون رقمًا صحيحًا: {str(e)}', 'products': Product.objects.all()})
 
         product = get_object_or_404(Product, pk=product_id)
-
-        # استخدام F expressions لتجنب مضاعفة الكمية
-        product.quantity = models.F('quantity') + quantity_to_add
-        product.save(update_fields=['quantity'])
+        product.quantity += quantity_to_add
+        product.save()
 
         current_date = timezone.now()
 
@@ -143,43 +145,58 @@ def add_quantity(request):
         messages.success(request, f'تمت إضافة {quantity_to_add} إلى {product.product_name} بنجاح!')
         return redirect('product_list')
 
-    return render(request, 'myapp/add_quantity.html', {'products': Product.objects.all()})# سحب كمية من منتج
+    return render(request, 'myapp/add_quantity.html', {'products': Product.objects.all()})
+
+# سحب كمية من منتج
 def withdraw_quantity(request):
+    print("=== تم تنفيذ POST للسحب ===")
+    print(f"ID المنتج: {request.POST.get('product_id')}")
+    print(f"الكمية المطلوبة للسحب: {request.POST.get('quantity_to_withdraw')}")
+
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
         quantity_to_withdraw = request.POST.get('quantity_to_withdraw')
 
+        # تحقق من وجود product_id
         if not product_id:
             return render(request, 'myapp/withdraw_quantity.html', {'error': 'المنتج غير محدد', 'products': Product.objects.all()})
 
         try:
+            # تحويل الكمية إلى عدد عشري
             quantity_to_withdraw = float(quantity_to_withdraw)
             if quantity_to_withdraw <= 0:
                 raise ValueError("الكمية يجب أن تكون أكبر من صفر")
         except ValueError as e:
             return render(request, 'myapp/withdraw_quantity.html', {'error': f'الكمية يجب أن تكون رقمًا صحيحًا: {str(e)}', 'products': Product.objects.all()})
 
+        # استرجاع المنتج باستخدام id
         product = get_object_or_404(Product, pk=product_id)
 
+        # التحقق من وجود الكمية المطلوبة
         if product.quantity >= quantity_to_withdraw:
-            # استخدام F expressions لتجنب التكرار
-            product.quantity = models.F('quantity') - quantity_to_withdraw
-            product.save(update_fields=['quantity'])
+            # تقليل الكمية المتاحة من المخزون
+            product.quantity -= quantity_to_withdraw
+            product.save()
 
             current_date = timezone.now()
 
+            # تسجيل حركة السحب
             Movement.objects.create(
                 product=product,
                 movement_type='سحب',
                 quantity=quantity_to_withdraw,
                 date=current_date
             )
-            messages.success(request, f'تم سحب {quantity_to_withdraw} من {product.product_name} بنجاح!')
-            return redirect('product_list')
+
+            # إعادة التوجيه إلى صفحة قائمة المنتجات
+            return redirect(reverse('product_list'))
         else:
+            # إذا كانت الكمية غير كافية
             return render(request, 'myapp/withdraw_quantity.html', {'error': 'لا توجد كمية كافية', 'products': Product.objects.all()})
 
+    # إذا كانت الطريقة غير POST، يتم عرض الصفحة
     return render(request, 'myapp/withdraw_quantity.html', {'products': Product.objects.all()})
+
 # عرض التقارير
 def show_reports(request):
     return render(request, 'myapp/show_reports.html')
@@ -278,25 +295,3 @@ def import_excel(request):
             return redirect('import_excel')
 
     return render(request, 'myapp/import_excel.html')
-
-# تصدير بيانات إلى Excel
-def export_excel(request):
-    products = Product.objects.all()
-    data = {'اسم المنتج': [], 'رمز المنتج': [], 'الكمية': [], 'الوحدة': [], 'الحد الأدنى': []}
-    for product in products:
-        data['اسم المنتج'].append(product.product_name)
-        data['رمز المنتج'].append(product.product_code)
-        data['الكمية'].append(product.quantity)
-        data['الوحدة'].append(product.unit)
-        data['الحد الأدنى'].append(product.min_stock)
-
-    df = pd.DataFrame(data)
-    response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename="inventory.xlsx"'
-    df.to_excel(response, index=False)
-    return response
-
-def clear_products(request):
-    Product.objects.all().delete()
-    messages.success(request, 'تم مسح جميع المنتجات بنجاح.')
-    return redirect('import_excel')
