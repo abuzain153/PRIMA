@@ -115,10 +115,6 @@ def chart_view(request):
     return render(request, 'graph.html', {'graph': image_data})
 
 def add_quantity(request):
-    print("=== تم تنفيذ POST للإضافة ===")
-    print(f"ID المنتج: {request.POST.get('product_id')}")
-    print(f"الكمية المطلوب إضافتها: {request.POST.get('quantity_to_add')}")
-
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
         quantity_to_add = request.POST.get('quantity_to_add')
@@ -131,8 +127,10 @@ def add_quantity(request):
             return render(request, 'myapp/add_quantity.html', {'error': f'الكمية يجب أن تكون رقمًا صحيحًا: {str(e)}', 'products': Product.objects.all()})
 
         product = get_object_or_404(Product, pk=product_id)
-        product.quantity += quantity_to_add
-        product.save()
+
+        # استخدام F expressions لتجنب مضاعفة الكمية
+        product.quantity = models.F('quantity') + quantity_to_add
+        product.save(update_fields=['quantity'])
 
         current_date = timezone.now()
 
@@ -145,9 +143,7 @@ def add_quantity(request):
         messages.success(request, f'تمت إضافة {quantity_to_add} إلى {product.product_name} بنجاح!')
         return redirect('product_list')
 
-    return render(request, 'myapp/add_quantity.html', {'products': Product.objects.all()})
-
-# سحب كمية من منتج
+    return render(request, 'myapp/add_quantity.html', {'products': Product.objects.all()})# سحب كمية من منتج
 def withdraw_quantity(request):
     print("=== تم تنفيذ POST للسحب ===")
     print(f"ID المنتج: {request.POST.get('product_id')}")
