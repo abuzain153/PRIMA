@@ -145,54 +145,41 @@ def add_quantity(request):
 
     return render(request, 'myapp/add_quantity.html', {'products': Product.objects.all()})# سحب كمية من منتج
 def withdraw_quantity(request):
-    print("=== تم تنفيذ POST للسحب ===")
-    print(f"ID المنتج: {request.POST.get('product_id')}")
-    print(f"الكمية المطلوبة للسحب: {request.POST.get('quantity_to_withdraw')}")
-
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
         quantity_to_withdraw = request.POST.get('quantity_to_withdraw')
 
-        # تحقق من وجود product_id
         if not product_id:
             return render(request, 'myapp/withdraw_quantity.html', {'error': 'المنتج غير محدد', 'products': Product.objects.all()})
 
         try:
-            # تحويل الكمية إلى عدد عشري
             quantity_to_withdraw = float(quantity_to_withdraw)
             if quantity_to_withdraw <= 0:
                 raise ValueError("الكمية يجب أن تكون أكبر من صفر")
         except ValueError as e:
             return render(request, 'myapp/withdraw_quantity.html', {'error': f'الكمية يجب أن تكون رقمًا صحيحًا: {str(e)}', 'products': Product.objects.all()})
 
-        # استرجاع المنتج باستخدام id
         product = get_object_or_404(Product, pk=product_id)
 
-        # التحقق من وجود الكمية المطلوبة
         if product.quantity >= quantity_to_withdraw:
-            # تقليل الكمية المتاحة من المخزون
-            product.quantity -= quantity_to_withdraw
-            product.save()
+            # استخدام F expressions لتجنب التكرار
+            product.quantity = models.F('quantity') - quantity_to_withdraw
+            product.save(update_fields=['quantity'])
 
             current_date = timezone.now()
 
-            # تسجيل حركة السحب
             Movement.objects.create(
                 product=product,
                 movement_type='سحب',
                 quantity=quantity_to_withdraw,
                 date=current_date
             )
-
-            # إعادة التوجيه إلى صفحة قائمة المنتجات
-            return redirect(reverse('product_list'))
+            messages.success(request, f'تم سحب {quantity_to_withdraw} من {product.product_name} بنجاح!')
+            return redirect('product_list')
         else:
-            # إذا كانت الكمية غير كافية
             return render(request, 'myapp/withdraw_quantity.html', {'error': 'لا توجد كمية كافية', 'products': Product.objects.all()})
 
-    # إذا كانت الطريقة غير POST، يتم عرض الصفحة
     return render(request, 'myapp/withdraw_quantity.html', {'products': Product.objects.all()})
-
 # عرض التقارير
 def show_reports(request):
     return render(request, 'myapp/show_reports.html')
