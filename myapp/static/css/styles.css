@@ -22,7 +22,7 @@ body {
 }
 
 .hero {
-    background: url('/static/images/777.PNG') no-repeat center center/cover;
+    background: url('/static/images/777.png') no-repeat center center/cover;
     height: 100vh;
     display: flex;
     justify-content: center;
