@@ -96,3 +96,4 @@ EMAIL_HOST_USER = 'abuzain186@gmail.com'
 EMAIL_HOST_PASSWORD = 'xbtd bqnh rstb adzq'  # **ضع كلمة المرور هنا!**
 
 DEFAULT_FROM_EMAIL = 'webmaster@yourdomain.com' # ممكن تغير ده لو حابب
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
