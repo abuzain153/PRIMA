@@ -4,37 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>التقارير</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            direction: rtl; /* الاتجاه من اليمين لليسار */
-            text-align: center; /* توسيط المحتوى */
+            font-family: 'Tajawal', sans-serif;
+            direction: rtl;
+            text-align: center;
+            background-color: #f8f9fa;
         }
+
         .report-links {
-            margin-top: 20px;
+            margin-top: 30px;
         }
+
         .report-links a {
             display: inline-block;
-            padding: 10px 20px;
-            margin: 5px;
+            padding: 12px 25px;
+            margin: 10px;
+            font-size: 1rem;
             text-decoration: none;
-            background-color: #007bff;
-            color: white;
+            color: #fff;
             border-radius: 5px;
         }
-        .report-links a:hover {
-            background-color: #0056b3;
+
+        .btn-received {
+            background-color: #28a745;
+        }
+
+        .btn-received:hover {
+            background-color: #218838;
+        }
+
+        .btn-withdrawn {
+            background-color: #dc3545;
+        }
+
+        .btn-withdrawn:hover {
+            background-color: #c82333;
+        }
+
+        .info-text {
+            color: #777;
+            font-size: 14px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>التقارير</h1>
+    <div class="container mt-5">
+        <h1 class="mb-4">التقارير</h1>
 
-    <div class="report-links">
-        <a href="{% url 'received_report' %}">تقرير الكميات المستلمة</a>
-        <a href="{% url 'withdrawn_report' %}">تقرير الكميات المسحوبة</a>
+        <div class="report-links">
+            <a href="{% url 'received_report' %}" class="btn btn-received">تقرير الكميات المستلمة</a>
+            <a href="{% url 'withdrawn_report' %}" class="btn btn-withdrawn">تقرير الكميات المسحوبة</a>
+        </div>
+
+        <p class="info-text">
+            يمكنك الوصول إلى تقارير عن الكميات المستلمة والكميات المسحوبة من خلال الروابط أعلاه.
+        </p>
     </div>
 
-    <p style="text-align: center; color: #777; font-size: 14px;">يمكنك الوصول إلى تقارير عن الكميات المستلمة والكميات المسحوبة من خلال الأزرار أعلاه.</p>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

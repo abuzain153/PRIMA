@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة المنتجات</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        /* إعدادات عامة */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://cdn.pixabay.com/photo/2017/06/13/22/42/warehouse-2409162_1280.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            position: relative;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7); /* تأثير البهتان */
+            z-index: -1;
+        }
+
+        /* شريط التنقل */
+        .navbar {
+            overflow: visible; /* خليناها visible عشان نشوف لو الـ overflow عامل مشكلة */
+            white-space: nowrap;
+            background-color: rgba(0, 123, 255, 0.9);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .navbar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: inline-block;
+            direction: rtl;
+            animation: scroll 15s linear infinite;
+        }
+
+        .navbar li {
+            display: inline-block;
+            margin-left: 15px;
+        }
+
+        .navbar li:first-child {
+            margin-left: 0;
+        }
+
+        .navbar a, .navbar .dropdown-button {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .navbar a:hover, .navbar .dropdown-button:hover {
+            color: #ddd;
+        }
+
+        /* القوائم المنسدلة */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            z-index: 1001; /* أعلى من شريط التنقل */
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            z-index: 1002; /* أعلى من الـ dropdown نفسه */
+            right: 0;
+            left: auto;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* محتوى الصفحة */
+        .hero {
+            text-align: center;
+            padding: 50px 20px;
+            position: relative;
+            color: white;
+            z-index: 1; /* قيمة أقل */
+        }
+
+        .hero-text {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            font-size: 18px;
+        }
+
+        /* حركة التمرير */
+        @keyframes scroll {
+            0% { transform: translateX(0%); } /* يبدأ من بداية العناصر */
+            100% { transform: translateX(-200%); } /* يتحرك لليسار */
+        }
+
+        .navbar:hover ul {
+            animation-play-state: paused; /* إيقاف الحركة عند الـhover */
+        }
+
+        /* تعديلات لمحاذاة "عن الموقع" و "اتصل بنا" */
+        #about .container,
+        #contact .container {
+            text-align: center; /* توسيط النص */
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+
+    <nav class="navbar">
+        <ul class="nav">
+            <li class="dropdown">
+                <button class="dropdown-button">إدارة المخزون 📦</button>
+                <div class="dropdown-content">
+                    <a href="{% url 'add_product' %}">إضافة منتج جديد</a>
+                    <a href="{% url 'product_list' %}">قائمة المنتجات</a>
+                    <a href="{% url 'add_quantity' %}">إضافة كمية</a>
+                    <a href="{% url 'withdraw_quantity' %}">سحب كمية</a>
+                    <a href="{% url 'low_stock_products' %}">المنتجات ذات المخزون المنخفض</a>
+                </div>
+            </li>
+            <li><a href="{% url 'home' %}">الرئيسية</a></li>
+            <li><a href="#about">عن الموقع</a></li>
+            <li><a href="#contact">اتصل بنا</a></li>
+            <li><a href="{% url 'logout' %}">تسجيل الخروج</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-text">
+            <h1>مرحبًا بكم في نظام إدارة المنتجات</h1>
+            <p>إدارة متكاملة وسهلة لمنتجاتك وحركاتك اليومية.</p>
+        </div>
+        <div class="hero-image">
+        </div>
+    </header>
+
+    <section id="about" class="section">
+        <div class="container">
+            <h2>عن الموقع</h2>
+            <p>هذا النظام يتيح لك إدارة المنتجات، تتبع الحركات، وإنشاء التقارير بكل سهولة.</p>
+        </div>
+    </section>
+
+    <section id="contact" class="section">
+        <div class="container">
+            <h2>اتصل بنا</h2>
+            <p>للتواصل معنا، يمكنك مراسلتنا عبر البريد الإلكتروني: <a href="mailto:info@mysite.com">info@mysite.com</a></p>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 جميع الحقوق محفوظة.</p>
+    </footer>
+</body>
+</html>

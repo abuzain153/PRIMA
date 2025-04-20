@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - برنامج إدارة المخازن</title>
+    <style>
+        /* خلفية الشاشة */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* خط أكثر احترافية */
+            background-color: #000; /* خلفية سوداء */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* الحاوية الرئيسية */
+        .login-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 50px; /* زيادة المساحة الداخلية */
+            border-radius: 12px; /* حواف أكثر نعومة */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* ظل أكثر بروزًا */
+            text-align: center;
+            width: 450px; /* عرض أكبر قليلاً */
+        }
+
+        /* العنوان */
+        .login-container h1 {
+            margin-bottom: 25px; /* مساحة أكبر أسفل العنوان */
+            font-size: 32px; /* حجم خط أكبر */
+            color: #333;
+        }
+
+        /* صورة جديدة أسفل العنوان */
+        .login-container .main-icon {
+            width: 150px; /* حجم أيقونة أكبر */
+            height: auto;
+            margin-bottom: 30px; /* مساحة أكبر أسفل الأيقونة */
+            opacity: 0.8; /* شفافيه بسيطة */
+        }
+
+        /* تسميات الحقول */
+        .login-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: #555;
+            text-align: right; /* محاذاة لليمين */
+        }
+
+        /* الحقول */
+        .login-container input {
+            width: calc(100% - 24px);
+            margin-bottom: 20px; /* مساحة أكبر بين الحقول */
+            padding: 15px; /* مساحة داخلية أكبر */
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 18px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-container input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+
+        /* زر تسجيل الدخول */
+        .login-container button {
+            width: 100%;
+            padding: 15px; /* مساحة داخلية أكبر للزر */
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px; /* حجم خط أكبر للزر */
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-container button:hover {
+            background-color: #0056b3;
+        }
+
+        /* روابط أسفل الزر */
+        .login-container .links {
+            margin-top: 25px; /* مساحة أكبر أعلى الروابط */
+            display: flex;
+            justify-content: space-between; /* توزيع الروابط على الأطراف */
+            align-items: center;
+        }
+
+        .login-container .links a {
+            font-size: 16px;
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-container .links a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>تسجيل الدخول</h1>
+        <img src="https://cdn-icons-png.flaticon.com/512/2910/2910768.png" class="main-icon" alt="Warehouse Icon">
+        <form method="post">
+            {% csrf_token %}
+            <div>
+                <label for="username">اسم المستخدم:</label>
+                <input type="text" id="username" name="username" placeholder="أدخل اسم المستخدم" required>
+            </div>
+            <div>
+                <label for="password">كلمة المرور:</label>
+                <input type="password" id="password" name="password" placeholder="أدخل كلمة المرور" required>
+            </div>
+            <button type="submit">تسجيل الدخول</button>
+        </form>
+        <div class="links">
+            <a href="{% url 'forgot_password' %}">نسيت كلمة المرور؟</a>
+            <a href="{% url 'register' %}">تسجيل حساب جديد</a>
+        </div>
+    </div>
+</body>
+</html>

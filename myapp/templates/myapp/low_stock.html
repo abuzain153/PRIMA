@@ -4,92 +4,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نواقص المخزون</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8f9fa;
             direction: rtl;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
+
+        .low-stock-row {
+            background-color: #ffe6e6 !important;
+        }
+
+        .search-bar {
             margin-bottom: 20px;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: right;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .low-stock-row {
-            background-color: #ffe6e6;
+
+        .no-stock {
+            text-align: center;
+            color: #6c757d;
+            font-size: 1.2rem;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>نواقص المخزون</h1>
 
-    <input type="text" id="searchInput" placeholder="ابحث عن منتج...">
+<div class="container mt-5">
+    <h1 class="text-center mb-4">نواقص المخزون</h1>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" class="form-control" placeholder="ابحث عن منتج...">
+    </div>
 
     {% if low_stock %}
-        <table id="lowStockTable">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>اسم المنتج</th>
-                    <th>الرمز</th>
-                    <th>الكمية المتوفرة</th>
-                    <th>الوحدة</th>
-                    <th>الحد الأدنى للمخزون</th>
-                    <th>الحالة</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for product in low_stock %}
-                    <tr class="{% if product.quantity < product.min_stock %}low-stock-row{% endif %}">
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ product.product_name }}</td>
-                        <td>{{ product.product_code }}</td>
-                        <td>{{ product.quantity|floatformat:2 }}</td>
-                        <td>{{ product.unit }}</td>
-                        <td>{{ product.min_stock }}</td>
-                        <td>{% if product.quantity < product.min_stock %}نقص{% else %}متوفر{% endif %}</td>
+        <div class="table-responsive">
+            <table id="lowStockTable" class="table table-bordered table-striped">
+                <thead class="table-primary">
+                    <tr>
+                        <th>#</th>
+                        <th>اسم المنتج</th>
+                        <th>الرمز</th>
+                        <th>الكمية المتوفرة</th>
+                        <th>الوحدة</th>
+                        <th>الحد الأدنى للمخزون</th>
+                        <th>الحالة</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for product in low_stock %}
+                        <tr class="{% if product.quantity < product.min_stock %}low-stock-row{% endif %}">
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ product.product_name }}</td>
+                            <td>{{ product.product_code }}</td>
+                            <td>{{ product.quantity|floatformat:2 }}</td>
+                            <td>{{ product.unit }}</td>
+                            <td>{{ product.min_stock }}</td>
+                            <td>{% if product.quantity < product.min_stock %}نقص{% else %}متوفر{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
         <p class="no-stock">لا توجد منتجات ناقصة في المخزون حالياً.</p>
     {% endif %}
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchInput');
-            const table = document.getElementById('lowStockTable');
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const table = document.getElementById('lowStockTable');
 
-            if (table) {
-                const rows = table.getElementsByTagName('tr');
+        if (table) {
+            const rows = table.getElementsByTagName('tr');
 
-                searchInput.addEventListener('input', function() {
-                    const filter = searchInput.value.toLowerCase();
+            searchInput.addEventListener('input', function() {
+                const filter = searchInput.value.toLowerCase();
 
-                    for (let i = 1; i < rows.length; i++) {
-                        const cells = rows[i].getElementsByTagName('td');
-                        let isMatch = false;
+                for (let i = 1; i < rows.length; i++) {
+                    const cells = rows[i].getElementsByTagName('td');
+                    let isMatch = false;
 
-                        for (let j = 0; j < cells.length; j++) {
-                            if (cells[j].textContent.toLowerCase().includes(filter)) {
-                                isMatch = true;
-                                break;
-                            }
+                    for (let j = 0; j < cells.length; j++) {
+                        if (cells[j].textContent.toLowerCase().includes(filter)) {
+                            isMatch = true;
+                            break;
                         }
-
-                        rows[i].style.display = isMatch ? '' : 'none';
                     }
-                });
-            }
-        });
-    </script>
+
+                    rows[i].style.display = isMatch ? '' : 'none';
+                }
+            });
+        }
+    });
+</script>
+
 </body>
 </html>

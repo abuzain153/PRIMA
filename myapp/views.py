@@ -1,318 +1,407 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product, Movement
-from django.db.models import Sum
-from django.db import models
 from django.http import HttpResponse, JsonResponse
-import pandas as pd
-from io import BytesIO
-import openpyxl
-from django.urls import reverse
 from django.contrib import messages
 from django.utils import timezone
+from django.db.models import Sum, F
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .models import Product, Movement
+from .forms import ProductForm, ForgetPasswordForm, RegistrationForm
+import pandas as pd
+from io import BytesIO
 import matplotlib.pyplot as plt
 import base64
-from .forms import ProductForm
-
-# عرض قائمة المنتجات
-def product_list(request):
-    products = Product.objects.all()
-    return render(request, 'myapp/product_list.html', {'products': products})
-
-# إضافة منتج جديد
-def add_product(request):
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.models import User
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.conf import settings # عشان نوصل لإعدادات البريد الإلكتروني
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+# عرض تسجيل الدخول
+def login_view(request):
     if request.method == 'POST':
-        product_name = request.POST.get('product_name')
-        product_code = request.POST.get('product_code')
-        quantity = request.POST.get('quantity')
-        unit = request.POST.get('unit')
-        min_stock = request.POST.get('min_stock')
-
-        try:
-            quantity = float(quantity)
-            min_stock = float(min_stock)
-
-            if quantity <= 0 or min_stock <= 0:
-                raise ValueError("الكمية والحد الأدنى يجب أن تكون أكبر من صفر")
-
-            # إنشاء المنتج
-            Product.objects.create(
-                product_name=product_name,
-                product_code=product_code,
-                quantity=quantity,
-                unit=unit,
-                min_stock=min_stock
-            )
-
-            messages.success(request, f'تم إضافة المنتج {product_name} بنجاح!')
-            return redirect('product_list')
-
-        except ValueError as e:
-            messages.error(request, f'خطأ: {str(e)}')
-            return render(request, 'myapp/add_product.html')
-
-    return render(request, 'myapp/add_product.html')
-
-# تعديل منتج (باستخدام Django Forms)
-def edit_product(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    if request.method == 'POST':
-        form = ProductForm(request.POST, instance=product)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "تم تعديل المنتج بنجاح.")
-            return redirect('product_list')
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('index')
         else:
-            messages.error(request, "حدث خطأ في تعديل المنتج. يرجى التحقق من النموذج.")
-    else:
-        form = ProductForm(instance=product)
-    return render(request, 'edit_product.html', {'form': form, 'product': product})
+            messages.error(request, 'اسم المستخدم أو كلمة المرور غير صحيحة.')
+    return render(request, 'myapp/login.html')
 
-# حذف منتج
-def delete_product(request, product_id):
-    product = Product.objects.get(id=product_id)
-    product.delete()
+# عرض تسجيل الخروج
+def logout_view(request):
+    logout(request)
+    messages.success(request, 'تم تسجيل الخروج بنجاح.')
+    return redirect('login')
+
+# صفحة رئيسية تتطلب تسجيل الدخول
+@login_required
+def index(request):
+    return render(request, 'myapp/index.html')
+
+# List products (تعديل لعرض تنبيهات المخزون المنخفض)
+class ProductListView(ListView):
+    model = Product
+    template_name = 'myapp/product_list.html'
+    context_object_name = 'products'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        low_stock_threshold = 10  # يمكنك تعديل هذا الرقم
+        low_stock_products = Product.objects.filter(quantity__lt=F('min_stock'))
+        context['low_stock_products'] = low_stock_products
+        return context
+
+# Add a new product
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'myapp/add_product.html'
+    success_url = reverse_lazy('product_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, f'تم إضافة المنتج {form.instance.product_name} بنجاح!')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "حدث خطأ في إضافة المنتج. يرجى التحقق من النموذج.")
+        return super().form_invalid(form)
+
+# سجل الحركات
+@login_required
+def movement_history(request):
+    movements = Movement.objects.all().order_by('-date')
+    context = {
+        'movements': movements,
+    }
+    return render(request, 'myapp/movement_history.html', context)
+
+# عرض التقارير
+@login_required
+def show_reports(request):
+    movements = Movement.objects.all().order_by('-date')
+    context = {
+        'movements': movements,
+        'report_type': 'سجل الحركات', # يمكنك تعديل هذا العنوان
+    }
+    return render(request, 'myapp/reports.html', context)
+
+# قائمة المنتجات
+@login_required
+def product_list(request):
+    # تم دمجه في ProductListView
     return redirect('product_list')
 
-# عرض الرسم البياني
-def show_graph(request):
-    # جلب البيانات الخاصة بالمسحوبات
-    movements = Movement.objects.filter(movement_type='سحب')
-    
-    # التأكد إذا كانت البيانات فارغة
-    if not movements:
-        # إرجاع استجابة توضح أنه لا توجد بيانات
-        return render(request, 'graph.html', {'error': 'لا يوجد مسحوبات'})
-    
-    # استخراج التواريخ والكميات
-    dates = [movement.date.strftime('%Y-%m-%d') for movement in movements]
-    quantities = [movement.quantity for movement in movements]
-    
-    # إنشاء الرسم البياني باستخدام matplotlib
-    fig, ax = plt.subplots()
-    ax.plot(dates, quantities, marker='o')
-    ax.set(xlabel='التاريخ', ylabel='الكمية المسحوبة', title='الكميات المسحوبة عبر الأيام')
-    ax.grid()
-    
-    # حفظ الرسم البياني في الذاكرة
-    buf = BytesIO()
-    fig.savefig(buf, format='png')
-    buf.seek(0)
-    
-    # ترميز الصورة إلى base64
-    image_data = base64.b64encode(buf.getvalue()).decode('utf-8')
-    
-    # إرجاع الصورة ضمن الاستجابة
-    return render(request, 'graph.html', {'graph': image_data})
-def chart_view(request):
-    withdrawn_data = Movement.objects.filter(movement_type='سحب').values('product__product_name').annotate(total_quantity=Sum('quantity'))
-    
-    # التأكد من أن البيانات موجودة
-    if not withdrawn_data:
-        return render(request, 'chart.html', {'error': 'لا توجد بيانات للمسحوبات'})
-    
-    return render(request, 'chart.html', {'withdrawn_data': withdrawn_data})   
-    # عرض الصورة في القالب
-    return render(request, 'graph.html', {'graph': image_data})
+# حذف جميع المنتجات
+@login_required
+def clear_products(request):
+    Product.objects.all().delete()
+    messages.success(request, "تم حذف جميع المنتجات بنجاح.")
+    return redirect('product_list')
 
+# Edit an existing product
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'myapp/edit_product.html'
+    success_url = reverse_lazy('product_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, f'تم تعديل المنتج {form.instance.product_name} بنجاح!')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "حدث خطأ في تعديل المنتج. يرجى التحقق من النموذج.")
+        return super().form_invalid(form)
+
+# Delete a product
+class ProductDeleteView(DeleteView):
+    model = Product
+    template_name = 'myapp/confirm_delete.html'
+    success_url = reverse_lazy('product_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "تم حذف المنتج بنجاح.")
+        return super().delete(request, *args, **kwargs)
+
+# إضافة كمية إلى منتج
+@login_required
 def add_quantity(request):
-    print("=== تم تنفيذ POST للإضافة ===")
-    print(f"ID المنتج: {request.POST.get('product_id')}")
-    print(f"الكمية المطلوب إضافتها: {request.POST.get('quantity_to_add')}")
-
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
         quantity_to_add = request.POST.get('quantity_to_add')
-
         try:
             quantity_to_add = float(quantity_to_add)
             if quantity_to_add <= 0:
                 raise ValueError("الكمية يجب أن تكون أكبر من صفر")
+
+            product = get_object_or_404(Product, pk=product_id)
+            # هنا بيتم تحديث الكمية في جدول Product مباشرةً
+            product.quantity += quantity_to_add
+            product.save()
+            messages.success(request, f'تمت إضافة {quantity_to_add} إلى {product.product_name} بنجاح!')
+            return redirect('product_list')
         except ValueError as e:
-            return render(request, 'myapp/add_quantity.html', {'error': f'الكمية يجب أن تكون رقمًا صحيحًا: {str(e)}', 'products': Product.objects.all()})
+            messages.error(request, f'خطأ: {str(e)}')
+            return redirect('product_list') # العودة لقائمة المنتجات مع عرض الخطأ
 
-        product = get_object_or_404(Product, pk=product_id)
-        product.quantity += quantity_to_add
-        product.save()
+    products_with_availability = []
+    products = Product.objects.all()
+    for product in products:
+        products_with_availability.append({
+            'id': product.id,
+            'product_name': product.product_name,
+            'product_code': product.product_code,
+            'unit': product.unit,
+            'available_quantity': product.quantity,  # استخدام الكمية من جدول Product
+        })
 
-        current_date = timezone.now()
+    context = {
+        'products': products_with_availability,
+    }
+    return render(request, 'myapp/add_quantity.html', context)
 
-        Movement.objects.create(
-            product=product,
-            movement_type='استلام',
-            quantity=quantity_to_add,
-            date=current_date
-        )
-        messages.success(request, f'تمت إضافة {quantity_to_add} إلى {product.product_name} بنجاح!')
-        return redirect('product_list')
-
-    return render(request, 'myapp/add_quantity.html', {'products': Product.objects.all()})
+# تقرير الكميات المستلمة (Excel)
+@login_required
+def received_report_excel(request):
+    received_movements = Movement.objects.filter(movement_type='استلام')
+    data = {
+        'اسم المنتج': [movement.product.product_name for movement in received_movements],
+        'الكمية المستلمة': [movement.quantity for movement in received_movements],
+        'التاريخ': [movement.date.strftime('%Y-%m-%d') for movement in received_movements],
+        'الكمية بعد التعديل': [movement.quantity_after for movement in received_movements],
+        'الوحدة': [movement.product.unit for movement in received_movements],
+    }
+    df = pd.DataFrame(data)
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="received_report.xlsx"'
+    df.to_excel(response, index=False)
+    return response
 
 # سحب كمية من منتج
+@login_required
 def withdraw_quantity(request):
-    print("=== تم تنفيذ POST للسحب ===")
-    print(f"ID المنتج: {request.POST.get('product_id')}")
-    print(f"الكمية المطلوبة للسحب: {request.POST.get('quantity_to_withdraw')}")
-
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
         quantity_to_withdraw = request.POST.get('quantity_to_withdraw')
-
-        # تحقق من وجود product_id
-        if not product_id:
-            return render(request, 'myapp/withdraw_quantity.html', {'error': 'المنتج غير محدد', 'products': Product.objects.all()})
-
         try:
-            # تحويل الكمية إلى عدد عشري
             quantity_to_withdraw = float(quantity_to_withdraw)
             if quantity_to_withdraw <= 0:
                 raise ValueError("الكمية يجب أن تكون أكبر من صفر")
-        except ValueError as e:
-            return render(request, 'myapp/withdraw_quantity.html', {'error': f'الكمية يجب أن تكون رقمًا صحيحًا: {str(e)}', 'products': Product.objects.all()})
 
-        # استرجاع المنتج باستخدام id
-        product = get_object_or_404(Product, pk=product_id)
+            product = get_object_or_404(Product, pk=product_id)
+            if quantity_to_withdraw > product.quantity:
+                raise ValueError("الكمية المسحوبة أكبر من المخزون المتوفر.")
 
-        # التحقق من وجود الكمية المطلوبة
-        if product.quantity >= quantity_to_withdraw:
-            # تقليل الكمية المتاحة من المخزون
-            product.quantity -= quantity_to_withdraw
-            product.save()
-
-            current_date = timezone.now()
-
-            # تسجيل حركة السحب
             Movement.objects.create(
                 product=product,
                 movement_type='سحب',
                 quantity=quantity_to_withdraw,
-                date=current_date
+                quantity_after=product.quantity - quantity_to_withdraw # تسجيل الكمية بعد السحب
             )
+            product.quantity -= quantity_to_withdraw
+            product.save()
+            messages.success(request, f'تم سحب {quantity_to_withdraw} من {product.product_name} بنجاح!')
+            return redirect('product_list')
+        except ValueError as e:
+            messages.error(request, f'خطأ: {str(e)}')
+            return redirect('product_list') # العودة لقائمة المنتجات مع عرض الخطأ
 
-            # إعادة التوجيه إلى صفحة قائمة المنتجات
-            return redirect(reverse('product_list'))
-        else:
-            # إذا كانت الكمية غير كافية
-            return render(request, 'myapp/withdraw_quantity.html', {'error': 'لا توجد كمية كافية', 'products': Product.objects.all()})
+    products_with_availability = []
+    products = Product.objects.all()
+    for product in products:
+        products_with_availability.append({
+            'id': product.id,
+            'product_name': product.product_name,
+            'product_code': product.product_code,
+            'unit': product.unit,
+            'available_quantity': product.quantity,  # استخدام الكمية من جدول Product
+        })
 
-    # إذا كانت الطريقة غير POST، يتم عرض الصفحة
-    return render(request, 'myapp/withdraw_quantity.html', {'products': Product.objects.all()})
+    context = {
+        'products': products_with_availability,
+    }
+    return render(request, 'myapp/withdraw_quantity.html', context)
 
-# عرض التقارير
-def show_reports(request):
-    return render(request, 'myapp/show_reports.html')
-
-# دالة مساعدة لإنشاء تقارير Excel
-def create_excel_report(queryset, movement_type):
-    data = {'اسم المنتج': [], 'الكمية': [], 'التاريخ': []}
-    for movement in queryset:
-        # تحويل التاريخ إلى تاريخ غير واعي بالمنطقة الزمنية
-        date_unaware = movement.date.replace(tzinfo=None)
-        data['اسم المنتج'].append(movement.product.product_name)
-        data['الكمية'].append(movement.quantity)
-        data['التاريخ'].append(date_unaware)  # استخدام التاريخ غير الواعي بالمنطقة الزمنية
+# تقرير الكميات المسحوبة (Excel)
+@login_required
+def withdrawn_report_excel(request):
+    withdrawn_movements = Movement.objects.filter(movement_type='سحب')
+    data = {
+        'اسم المنتج': [movement.product.product_name for movement in withdrawn_movements],
+        'الكمية المسحوبة': [movement.quantity for movement in withdrawn_movements],
+        'التاريخ': [movement.date.strftime('%Y-%m-%d') for movement in withdrawn_movements],
+        'الكمية بعد التعديل': [movement.quantity_after for movement in withdrawn_movements],
+        'الوحدة': [movement.product.unit for movement in withdrawn_movements],
+    }
     df = pd.DataFrame(data)
     response = HttpResponse(content_type='application/ms-excel')
-    response['Content-Disposition'] = f'attachment; filename="{movement_type}_report.xlsx"'
+    response['Content-Disposition'] = 'attachment; filename="withdrawn_report.xlsx"'
     df.to_excel(response, index=False)
     return response
 
-# تقرير الكميات المستلمة
-def received_report_excel(request):
-    movements = Movement.objects.filter(movement_type='استلام')
-    return create_excel_report(movements, 'received')
+@login_required
+def chart_view(request):
+    withdrawn_data = Movement.objects.filter(movement_type='سحب').values('product__product_name', 'product__unit').annotate(total_quantity=Sum('quantity')).order_by('-total_quantity')
 
-# تقرير الكميات المسحوبة
-def withdrawn_report_excel(request):
-    movements = Movement.objects.filter(movement_type='سحب')
-    return create_excel_report(movements, 'withdrawn')
+    if not withdrawn_data.exists():
+        return render(request, 'myapp/chart.html', {'error': 'لا توجد بيانات لعرض الرسم البياني.'})
 
-# الحصول على تفاصيل المنتج
+    context = {
+        'withdrawn_data': withdrawn_data,
+    }
+    return render(request, 'myapp/chart.html', context)
+
+
+
+
+@login_required
 def get_product_info(request, product_id):
-    try:
-        product = get_object_or_404(Product, id=product_id)
-        data = {
-            'product_code': product.product_code,
-            'product_name': product.product_name,
-            'quantity': product.quantity,
-            'unit': product.unit,
-            'min_stock': product.min_stock
-        }
-        return JsonResponse(data)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+    product = get_object_or_404(Product, id=product_id)
+    data = {
+        'product_name': product.product_name,
+        'product_code': product.product_code,
+        'quantity': product.quantity,
+        'unit': product.unit,
+        'min_stock': product.min_stock,
+    }
+    return JsonResponse(data)
 
-# عرض المنتجات التي بها مخزون منخفض
-def low_stock_products(request):
-    low_stock = Product.objects.filter(quantity__lt=models.F('min_stock'))
-    for product in low_stock:
-        print(f"Product Name: {product.product_name}, Product Code: {product.product_code}")
-    return render(request, 'myapp/low_stock.html', {'low_stock': low_stock})
-
-# استيراد بيانات من Excel
-def import_excel(request):
-    if request.method == 'POST':
-        excel_file = request.FILES['excel_file']
-        try:
-            df = pd.read_excel(excel_file)
-            columns = df.columns.tolist()
-
-            required_columns = ['product_name', 'product_code', 'quantity', 'unit', 'min_stock']
-            if not all(col in columns for col in required_columns):
-                messages.error(request, 'خطأ: ملف Excel لا يحتوي على جميع الأعمدة المطلوبة.')
-                return redirect('import_excel')
-
-            for _, row in df.iterrows():
-                if all(pd.notnull(row)):
-                    try:
-                        product_name = row['product_name'].strip()
-                        product_code = row['product_code'].strip()
-                        quantity = float(row['quantity'])
-                        unit = row['unit'].strip()
-                        min_stock = float(row['min_stock'])
-
-                        if not product_name or not product_code or quantity is None or not unit or min_stock is None:
-                            messages.error(request, 'خطأ: توجد قيم فارغة في ملف Excel.')
-                            return redirect('import_excel')
-
-                        Product.objects.update_or_create(
-                            product_code=product_code,
-                            defaults={
-                                'product_name': product_name,
-                                'quantity': quantity,
-                                'unit': unit,
-                                'min_stock': min_stock,
-                            }
-                        )
-                    except ValueError as e:
-                        messages.error(request, f'خطأ: قيمة غير صحيحة في ملف Excel: {e}')
-                        return redirect('import_excel')
-
-            messages.success(request, 'تم استيراد البيانات بنجاح.')
-            return redirect('product_list')
-
-        except Exception as e:
-            messages.error(request, f'خطأ: حدث خطأ أثناء قراءة ملف Excel: {e}')
-            return redirect('import_excel')
-
-    return render(request, 'myapp/import_excel.html')
-# تصدير بيانات إلى Excel
+@login_required
 def export_excel(request):
     products = Product.objects.all()
-    data = {'اسم المنتج': [], 'رمز المنتج': [], 'الكمية': [], 'الوحدة': [], 'الحد الأدنى': []}
-    for product in products:
-        data['اسم المنتج'].append(product.product_name)
-        data['رمز المنتج'].append(product.product_code)
-        data['الكمية'].append(product.quantity)
-        data['الوحدة'].append(product.unit)
-        data['الحد الأدنى'].append(product.min_stock)
-
+    data = {
+        'اسم المنتج': [product.product_name for product in products],
+        'رمز المنتج': [product.product_code for product in products],
+        'الكمية': [product.quantity for product in products],
+        'الوحدة': [product.unit for product in products],
+        'الحد الأدنى': [product.min_stock for product in products],
+    }
     df = pd.DataFrame(data)
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename="inventory.xlsx"'
     df.to_excel(response, index=False)
     return response
 
-def clear_products(request):
-    Product.objects.all().delete()
-    messages.success(request, 'تم مسح جميع المنتجات بنجاح.')
-    return redirect('import_excel')
+@login_required
+def low_stock_products(request):
+    """
+    عرض قائمة بالمنتجات التي يقل مخزونها عن الحد الأدنى.
+    """
+    low_stock = Product.objects.filter(quantity__lt=F('min_stock'))
+    context = {
+        'low_stock': low_stock,
+    }
+    return render(request, 'myapp/low_stock.html', context)
+def forget_password(request):
+    if request.method == 'POST':
+        form = ForgetPasswordForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            try:
+                user = User.objects.get(email=email)
+                subject = 'إعادة تعيين كلمة المرور - برنامج إدارة المخازن'
+                context = {
+                    'email': user.email,
+                    'domain': request.META['HTTP_HOST'],
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': default_token_generator.make_token(user),
+                }
+                form.send_mail(
+                    'emails/password_reset_subject.txt',
+                    'emails/password_reset_body.txt',
+                    context,
+                    settings.DEFAULT_FROM_EMAIL
+                )
+                messages.success(request, 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.')
+                return redirect('login')
+            except User.DoesNotExist:
+                messages.error(request, 'هذا البريد الإلكتروني غير مسجل.')
+    else:
+        form = ForgetPasswordForm()
+    return render(request, 'forget_password.html', {'form': form})
+
+def password_reset_confirm(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+            if new_password and new_password == confirm_password:
+                user.set_password(new_password)
+                user.save()
+                messages.success(request, 'تم تعيين كلمة المرور الجديدة بنجاح. يمكنك تسجيل الدخول الآن.')
+                return redirect('login')
+            else:
+                messages.error(request, 'كلمتا المرور غير متطابقتين.')
+        else:
+            return render(request, 'password_reset_confirm.html', {'form': {}, 'uidb64': uidb64, 'token': token})
+    else:
+        messages.error(request, 'رابط إعادة تعيين كلمة المرور غير صالح.')
+        return redirect('login')
+
+def register(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, 'تم إنشاء حسابك بنجاح. يمكنك تسجيل الدخول الآن.')
+            return redirect('login')
+    else:
+        form = RegistrationForm()
+    return render(request, 'register.html', {'form': form})
+
+def register(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # هنا ممكن تعمل تفعيل للحساب عن طريق الإيميل لو عايز
+            messages.success(request, 'تم إنشاء حسابك بنجاح. يمكنك تسجيل الدخول الآن.')
+            return redirect('login')
+    else:
+        form = RegistrationForm()
+    return render(request, 'register.html', {'form': form})
+@login_required
+def inventory(request):
+    # تم دمجه في ProductListView
+    return redirect('product_list')
+
+@login_required
+def import_excel(request):
+    if request.method == 'POST':
+        excel_file = request.FILES['excel_file']
+        try:
+            df = pd.read_excel(excel_file)
+            required_columns = ['product_name', 'product_code', 'quantity', 'unit', 'min_stock']
+            if not all(col in df.columns for col in required_columns):
+                messages.error(request, 'خطأ: ملف Excel لا يحتوي على جميع الأعمدة المطلوبة.')
+                return redirect('import_excel')
+            products = []
+            for _, row in df.iterrows():
+                if all(pd.notnull(row)):
+                    products.append(Product(
+                        product_name=row['product_name'].strip(),
+                        product_code=row['product_code'].strip(),
+                        quantity=float(row['quantity']),
+                        unit=row['unit'].strip(),
+                        min_stock=float(row['min_stock'])
+                    ))
+            Product.objects.bulk_create(products)
+            messages.success(request, 'تم استيراد البيانات بنجاح.')
+            return redirect('product_list')
+        except Exception as e:
+            messages.error(request, f'خطأ: حدث خطأ أثناء قراءة ملف Excel: {e}')
+            return redirect('import_excel')
+    return render(request, 'myapp/import_excel.html')

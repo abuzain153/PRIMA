@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
-from myapp import views #اضافة هذا السطر
+from myapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('myapp/', include('myapp.urls')),
-    path('', views.product_list, name='home'), #اضافة هذا السطر
+    path('login/', views.login_view, name='login'),  # إضافة مسار تسجيل الدخول هنا
+    path('', views.product_list, name='home'),
 ]
