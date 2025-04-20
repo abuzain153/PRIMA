@@ -9,7 +9,7 @@ from .models import Product, Movement
 from .forms import ProductForm, ForgetPasswordForm, RegistrationForm
 import pandas as pd
 from io import BytesIO
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import base64
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
