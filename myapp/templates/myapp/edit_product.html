@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="ar">
+{% load i18n %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تعديل منتج</title>
+    <title>{% translate "تعديل منتج" %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
 <div class="container mt-5">
-    <h1 class="text-center mb-4">تعديل منتج</h1>
+    <h1 class="text-center mb-4">{% translate "تعديل منتج" %}</h1>
 
     {% if success %}
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -27,32 +28,49 @@
 
     <form method="post" id="edit-product-form">
         {% csrf_token %}
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>{% translate "حدثت بعض الأخطاء:" %}</strong>
+                <ul>
+                    {% for field in form %}
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
         <div class="mb-3">
-            <label for="product_name" class="form-label">اسم المنتج:</label>
-            <input type="text" id="product_name" name="product_name" value="{{ product.product_name }}" class="form-control" required>
+            <label for="product_name" class="form-label">{% translate "اسم المنتج:" %}</label>
+            <input type="text" id="product_name" name="product_name" value="{{ form.product_name.value|default:product.product_name }}" class="form-control" required>
         </div>
 
         <div class="mb-3">
-            <label for="product_code" class="form-label">رمز المنتج:</label>
-            <input type="text" id="product_code" name="product_code" value="{{ product.product_code }}" class="form-control" required>
+            <label for="product_code" class="form-label">{% translate "رمز المنتج:" %}</label>
+            <input type="text" id="product_code" name="product_code" value="{{ form.product_code.value|default:product.product_code }}" class="form-control" required>
         </div>
 
         <div class="mb-3">
-            <label for="quantity" class="form-label">الكمية:</label>
-            <input type="number" id="quantity" name="quantity" value="{{ product.quantity }}" class="form-control" required>
+            <label for="quantity" class="form-label">{% translate "الكمية:" %}</label>
+            <input type="number" id="quantity" name="quantity" value="{{ form.quantity.value|default:product.quantity }}" class="form-control" required step="any">
         </div>
 
         <div class="mb-3">
-            <label for="unit" class="form-label">الوحدة:</label>
-            <input type="text" id="unit" name="unit" value="{{ product.unit }}" class="form-control" required>
+            <label for="unit" class="form-label">{% translate "الوحدة:" %}</label>
+            <input type="text" id="unit" name="unit" value="{{ form.unit.value|default:product.unit }}" class="form-control" required>
         </div>
 
         <div class="mb-3">
-            <label for="min_stock" class="form-label">الحد الأدنى للمخزون:</label>
-            <input type="number" id="min_stock" name="min_stock" value="{{ product.min_stock }}" class="form-control" required>
+            <label for="min_stock" class="form-label">{% translate "الحد الأدنى للمخزون:" %}</label>
+            <input type="number" id="min_stock" name="min_stock" value="{{ form.min_stock.value|default:product.min_stock }}" class="form-control" required>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">تعديل</button>
+        <button type="submit" class="btn btn-primary w-100">{% translate "تعديل" %}</button>
     </form>
 
     <div class="text-danger mt-3" id="error-message" style="display: none;"></div>
@@ -67,7 +85,7 @@
         errorMessage.style.display = 'none';
         let hasError = false;
 
-        // تحقق من صحة البيانات
+        // تحقق من صحة البيانات (هذا الكود مكرر مع فحص Django، يمكنك إزالته إذا أردت)
         const productName = form['product_name'].value.trim();
         const productCode = form['product_code'].value.trim();
         const quantity = form['quantity'].value.trim();
@@ -75,7 +93,7 @@
         const minStock = form['min_stock'].value.trim();
 
         if (!productName || !productCode || !quantity || !unit || !minStock) {
-            errorMessage.textContent = 'يرجى ملء جميع الحقول.';
+            errorMessage.textContent = '{% translate "يرجى ملء جميع الحقول." %}';
             errorMessage.style.display = 'block';
             hasError = true;
         }

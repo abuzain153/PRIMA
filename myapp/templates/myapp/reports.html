@@ -1,76 +1,79 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}سجل الحركات{% endblock %}
+{% block title %}{% translate "سجل الحركات" %}{% endblock %}
 
 {% block content %}
 <div class="container my-5">
-    <h1 class="text-center mb-4">سجل الحركات</h1>
+    <h1 class="text-center mb-4">{% translate "سجل الحركات" %}</h1>
 
-    <div class="d-flex justify-content-center mb-4">
-        <a href="{% url 'received_report' %}" class="btn btn-success me-2">تنزيل تقرير الاستلام (Excel)</a>
-        <a href="{% url 'withdrawn_report' %}" class="btn btn-danger">تنزيل تقرير السحب (Excel)</a>
-    </div>
+    <div class="d-flex justify-content-center mb-4">
+        <a href="{% url 'received_report' %}" class="btn btn-success me-2">{% translate "تنزيل تقرير الاستلام (Excel)" %}</a>
+        <a href="{% url 'withdrawn_report' %}" class="btn btn-danger">{% translate "تنزيل تقرير السحب (Excel)" %}</a>
+    </div>
 
-    <div class="search-box mb-4">
-        <input type="text" id="searchInput" class="form-control" placeholder="ابحث عن منتج...">
-    </div>
+    <div class="search-box mb-4">
+        <input type="text" id="searchInput" class="form-control" placeholder="{% translate "ابحث عن منتج..." %}">
+    </div>
 
-    {% if movements %}
-    <div class="table-responsive">
-        <table id="movementsTable" class="table table-bordered table-striped">
-            <thead class="table-primary">
-                <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-center">اسم المنتج</th>
-                    <th class="text-center">نوع الحركة</th>
-                    <th class="text-center">الكمية</th>
-                    <th class="text-center">الوحدة</th>
-                    <th class="text-center">التاريخ</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for movement in movements %}
-                <tr>
-                    <td class="text-center">{{ forloop.counter }}</td>
-                    <td class="text-center">{{ movement.product.product_name }}</td>
-                    <td class="text-center">{{ movement.movement_type }}</td>
-                    <td class="text-center">{{ movement.quantity }}</td>
-                    <td class="text-center">{{ movement.product.unit }}</td>
-                    <td class="text-center">{{ movement.date }}</td>
-                </tr>
-                {% empty %}
-                    <tr><td colspan="6" class="text-center">لا توجد حركات لعرضها في هذا التقرير.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-        <p class="text-center text-warning fw-bold">لا توجد حركات لعرضها في هذا التقرير.</p>
-    {% endif %}
+    {% if movements %}
+    <div class="table-responsive">
+        <table id="movementsTable" class="table table-bordered table-striped">
+            <thead class="table-primary">
+                <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">{% translate "اسم المنتج" %}</th>
+                    <th class="text-center">{% translate "نوع الحركة" %}</th>
+                    <th class="text-center">{% translate "الكمية" %}</th>
+                    <th class="text-center">{% translate "الوحدة" %}</th>
+                    <th class="text-center">{% translate "التاريخ" %}</th>
+                    <th class="text-center">{% translate "الفريق" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movement in movements %}
+                <tr>
+                    <td class="text-center">{{ forloop.counter }}</td>
+                    <td class="text-center">{{ movement.product.product_name }}</td>
+                    <td class="text-center">{% translate movement.movement_type %}</td>
+                    <td class="text-center">{{ movement.quantity }}</td>
+                    <td class="text-center">{{ movement.product.unit }}</td>
+                    <td class="text-center">{{ movement.date }}</td>
+                    <td class="text-center">{% translate movement.team.name %}</td>
+                </tr>
+                {% empty %}
+                    <tr><td colspan="7" class="text-center">{% translate "لا توجد حركات لعرضها في هذا التقرير." %}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="text-center text-warning fw-bold">{% translate "لا توجد حركات لعرضها في هذا التقرير." %}</p>
+    {% endif %}
 </div>
 
 <script>
-    const searchInput = document.getElementById('searchInput');
-    const table = document.getElementById('movementsTable');
-    const rows = table ? table.getElementsByTagName('tr') : [];
+    const searchInput = document.getElementById('searchInput');
+    const table = document.getElementById('movementsTable');
+    const rows = table ? table.getElementsByTagName('tr') : [];
 
-    searchInput.addEventListener('input', function() {
-        const filter = searchInput.value.toLowerCase();
+    searchInput.addEventListener('input', function() {
+        const filter = searchInput.value.toLowerCase();
 
-        for (let i = 1; i < rows.length; i++) { // ابدأ من 1 لتجنب ترويسة الجدول
-            const cells = rows[i].getElementsByTagName('td');
-            let isMatch = false;
+        for (let i = 1; i < rows.length; i++) { // ابدأ من 1 لتجنب ترويسة الجدول
+            const cells = rows[i].getElementsByTagName('td');
+            let isMatch = false;
 
-            for (let j = 0; j < cells.length; j++) {
-                if (cells[j].textContent.toLowerCase().includes(filter)) {
-                    isMatch = true;
-                    break;
-                }
-            }
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j].textContent.toLowerCase().includes(filter)) {
+                    isMatch = true;
+                    break;
+                }
+            }
 
-            rows[i].style.display = isMatch ? '' : 'none';
-        }
-    });
+            rows[i].style.display = isMatch ? '' : 'none';
+        }
+    });
 </script>
 
 {% endblock %}

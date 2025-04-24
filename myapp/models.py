@@ -1,6 +1,8 @@
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth.models import User  # استورد موديل User
+from django.contrib.auth.models import Group # استورد موديل Group
 
 class Product(models.Model):
     product_name = models.CharField(max_length=255)
@@ -8,12 +10,13 @@ class Product(models.Model):
     quantity = models.FloatField(default=0)
     unit = models.CharField(max_length=50)
     min_stock = models.FloatField()
+    team = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='products', null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products_added_by') # حقل المستخدم
 
     def __str__(self):
         return self.product_name
 
     def save(self, *args, **kwargs):
-        # إزالة التحقق من الكمية السالبة (كما في الكود الأصلي)
         super().save(*args, **kwargs)
 
 class Movement(models.Model):
@@ -25,7 +28,8 @@ class Movement(models.Model):
     movement_type = models.CharField(max_length=50, choices=MOVEMENT_TYPES)
     quantity = models.FloatField()
     date = models.DateTimeField(auto_now_add=True)
-    quantity_after = models.FloatField(null=True, blank=True) # الحقل الجديد
+    quantity_after = models.FloatField(null=True, blank=True)
+    team = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='movements', null=True, blank=True) # حقل الفريق الجديد
 
     def __str__(self):
         return f"{self.product.product_name} - {self.movement_type} - {self.quantity}"
@@ -34,7 +38,6 @@ class Movement(models.Model):
         if self.movement_type == "سحب" and self.quantity > self.product.quantity:
             raise ValueError("الكمية المسحوبة أكبر من المخزون المتوفر.")
         super().save(*args, **kwargs)
-        # تحديث الكمية بعد التعديل عند حفظ الحركة
         self.quantity_after = self.product.quantity
         super().save(update_fields=['quantity_after'])
 

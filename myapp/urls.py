@@ -27,9 +27,13 @@ urlpatterns = [
     path('withdrawn-chart/', views.chart_view, name='withdrawn_chart'),
     path('import_excel/', views.import_excel, name='import_excel'),
     path('export_excel/', views.export_excel, name='export_excel'),
-
+     path('import_raw_materials/', views.import_raw_materials, name='import_raw_materials'),
+    path('import_maintenance/', views.import_maintenance, name='import_maintenance'),
     # روابط نسيان كلمة المرور وتسجيل المستخدم الجديد
     path('forgot_password/', views.forget_password, name='forgot_password'),
     path('password_reset/confirm/<str:uidb64>/<str:token>/', views.password_reset_confirm, name='password_reset_confirm'),
     path('register/', views.register, name='register'),
+    path('products/get_products_by_name/', views.get_products_by_name, name='get_products_by_name'),
+    path('password_reset/done/', views.password_reset_done, name='password_reset_done'),
+    path('products/get_product_by_barcode/', views.get_product_by_barcode, name='get_product_by_barcode'),
 ]

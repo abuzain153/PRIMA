@@ -1,27 +1,28 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}{{ report_type }}{% endblock %}
+{% block title %}{% translate report_type %}{% endblock %}
 
 {% block content %}
-    <h1>{{ report_type }}</h1>
+    <h1>{% translate report_type %}</h1>
 
     <div class="export-btns" style="margin-bottom: 20px;">
-        <a href="{% url 'export_excel_report' report_type %}" class="btn btn-excel">تصدير إلى Excel</a>
-        <a href="{% url 'export_pdf_report' report_type %}" class="btn btn-pdf">تصدير إلى PDF</a>
+        <a href="{% url 'export_excel_report' report_type %}" class="btn btn-excel">{% translate "تصدير إلى Excel" %}</a>
+        <a href="{% url 'export_pdf_report' report_type %}" class="btn btn-pdf">{% translate "تصدير إلى PDF" %}</a>
     </div>
 
     <div class="search-box" style="margin: 20px auto; max-width: 600px;">
-        <input type="text" id="searchInput" placeholder="ابحث عن منتج..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
+        <input type="text" id="searchInput" placeholder="{% translate "ابحث عن منتج..." %}" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
     </div>
 
     {% if movements %}
         <table id="movementsTable" style="width: 80%; margin: 0 auto; border-collapse: collapse; background: white; border: 1px solid #ddd;">
             <thead>
                 <tr style="background-color: #007bff; color: white;">
-                    <th>اسم المنتج</th>
-                    <th>الكمية</th>
-                    <th>الوحدة</th>
-                    <th>التاريخ</th>
+                    <th>{% translate "اسم المنتج" %}</th>
+                    <th>{% translate "الكمية" %}</th>
+                    <th>{% translate "الوحدة" %}</th>
+                    <th>{% translate "التاريخ" %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,7 +37,7 @@
             </tbody>
         </table>
     {% else %}
-        <p class="no-movements" style="text-align: center; color: red; font-weight: bold;">لا توجد حركات لعرضها في هذا التقرير.</p>
+        <p class="no-movements" style="text-align: center; color: red; font-weight: bold;">{% translate "لا توجد حركات لعرضها في هذا التقرير." %}</p>
     {% endif %}
 
     <script>

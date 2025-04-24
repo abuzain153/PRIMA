@@ -37,3 +37,82 @@ footer {
     text-align: center;
     padding: 1rem;
 }
+
+/* --- Styling for the fixed navbar on product list page --- */
+.navbar-fixed-product-list {
+    background-color: #333; /* نفس لون الخلفية */
+    color: #fff;
+    padding: 1rem; /* نفس الـ padding */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.navbar-fixed-product-list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    direction: rtl; /* لو عندك اتجاه عربي */
+    white-space: nowrap; /* عشان العناصر يبقوا في سطر واحد */
+}
+
+.navbar-fixed-product-list li {
+    display: inline-block;
+    margin-left: 1rem; /* مسافة بين العناصر */
+}
+
+.navbar-fixed-product-list li:first-child {
+    margin-left: 0;
+}
+
+.navbar-fixed-product-list a, .navbar-fixed-product-list button {
+    color: #fff;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: inherit; /* عشان ياخد حجم الخط من الأب */
+}
+
+.navbar-fixed-product-list a:hover, .navbar-fixed-product-list button:hover {
+    color: #aaa; /* لون مختلف عند الـhover */
+}
+
+.navbar-fixed-product-list .dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.navbar-fixed-product-list .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    right: 0; /* عشان القائمة تظهر من اليمين */
+    text-align: right; /* محاذاة النص لليمين */
+}
+
+.navbar-fixed-product-list .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.navbar-fixed-product-list .dropdown-content a:hover {background-color: #ddd;}
+
+.navbar-fixed-product-list .dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.navbar-fixed-product-list .dropdown-button {
+    padding: 0;
+}

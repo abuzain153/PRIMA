@@ -25,6 +25,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',  # **[تم الإضافة] مهم جدًا لدعم اللغات**
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -69,9 +70,20 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'ar'
+LANGUAGE_CODE = 'ar'  # **[موجود] اللغة الافتراضية للمشروع**
+
+LANGUAGES = [  # **[تم الإضافة] قائمة اللغات اللي هتدعمها**
+    ('ar', 'العربية'),
+    ('he', 'עברית'),
+    ('en', 'English'),
+]
+
+LOCALE_PATHS = [  # **[تم الإضافة] مسار فولدر ملفات الترجمة**
+    os.path.join(BASE_DIR, 'locale'),
+]
+
 TIME_ZONE = 'Asia/Amman'
-USE_I18N = True
+USE_I18N = True  # **[موجود] تفعيل نظام الترجمة في Django**
 USE_TZ = True
 
 STATIC_URL = 'static/'

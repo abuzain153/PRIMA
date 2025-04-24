@@ -1,0 +1,790 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-23 14:41+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\myapp\forms.py:14 .\myapp\templates\myapp\chart.html:69
+#: .\myapp\templates\myapp\low_stock.html:34
+#: .\myapp\templates\myapp\product_list.html:73
+#: .\myapp\templates\myapp\received_report.html:56
+#: .\myapp\templates\myapp\report.html:22
+#: .\myapp\templates\myapp\reports.html:25 .\myapp\views.py:219
+#: .\myapp\views.py:286
+msgid "اسم المنتج"
+msgstr "Product Name"
+
+#: .\myapp\forms.py:15
+msgid "رمز المنتج"
+msgstr "Product Code"
+
+#: .\myapp\forms.py:16 .\myapp\templates\myapp\chart.html:118
+#: .\myapp\templates\myapp\product_list.html:75
+#: .\myapp\templates\myapp\received_report.html:57
+#: .\myapp\templates\myapp\report.html:23
+#: .\myapp\templates\myapp\reports.html:27
+msgid "الكمية"
+msgstr "Quantity"
+
+#: .\myapp\forms.py:17 .\myapp\templates\myapp\chart.html:71
+#: .\myapp\templates\myapp\low_stock.html:37
+#: .\myapp\templates\myapp\product_list.html:76
+#: .\myapp\templates\myapp\report.html:24
+#: .\myapp\templates\myapp\reports.html:28 .\myapp\views.py:223
+#: .\myapp\views.py:290
+msgid "الوحدة"
+msgstr "Unit"
+
+#: .\myapp\forms.py:18 .\myapp\templates\myapp\product_list.html:77
+msgid "الحد الأدنى"
+msgstr "Min Stock"
+
+#: .\myapp\forms.py:32
+msgid "الكمية يجب أن تكون رقمًا صالحًا."
+msgstr "Quantity must be a valid number."
+
+#: .\myapp\forms.py:38
+msgid "الحد الأدنى يجب أن يكون أكبر من صفر."
+msgstr "Minimum stock must be greater than zero."
+
+#: .\myapp\forms.py:45 .\myapp\forms.py:48
+msgid "رمز المنتج موجود بالفعل."
+msgstr "Product code already exists."
+
+#: .\myapp\forms.py:52 .\myapp\forms.py:63
+msgid "البريد الإلكتروني"
+msgstr "Email"
+
+#: .\myapp\forms.py:64
+msgid "اختر فريقك"
+msgstr "Choose your team"
+
+#: .\myapp\forms.py:64 .\myapp\templates\myapp\reports.html:30
+#: .\myapp\views.py:224 .\myapp\views.py:291
+msgid "الفريق"
+msgstr "Team"
+
+#: .\myapp\templates\myapp\add_product.html:4
+#: .\myapp\templates\myapp\base.html:29
+msgid "إضافة منتج"
+msgstr "Add Product"
+
+#: .\myapp\templates\myapp\add_product.html:8
+#: .\myapp\templates\myapp\index.html:168
+#: .\myapp\templates\myapp\product_list.html:57
+msgid "إضافة منتج جديد"
+msgstr "Add New Product"
+
+#: .\myapp\templates\myapp\add_product.html:25
+#: .\myapp\templates\myapp\add_quantity.html:38
+#: .\myapp\templates\myapp\edit_product.html:49
+msgid "اسم المنتج:"
+msgstr "Product Name:"
+
+#: .\myapp\templates\myapp\add_product.html:26
+msgid "أدخل اسم المنتج"
+msgstr "Enter product name"
+
+#: .\myapp\templates\myapp\add_product.html:30
+#: .\myapp\templates\myapp\edit_product.html:54
+msgid "رمز المنتج:"
+msgstr "Product Code:"
+
+#: .\myapp\templates\myapp\add_product.html:31
+msgid "أدخل رمز المنتج"
+msgstr "Enter product code"
+
+#: .\myapp\templates\myapp\add_product.html:35
+#: .\myapp\templates\myapp\edit_product.html:59
+msgid "الكمية:"
+msgstr "Quantity:"
+
+#: .\myapp\templates\myapp\add_product.html:36
+msgid "أدخل الكمية"
+msgstr "Enter quantity"
+
+#: .\myapp\templates\myapp\add_product.html:40
+#: .\myapp\templates\myapp\add_quantity.html:43
+#: .\myapp\templates\myapp\edit_product.html:64
+msgid "الوحدة:"
+msgstr "Unit:"
+
+#: .\myapp\templates\myapp\add_product.html:41
+msgid "أدخل الوحدة (مثل: كجم، لتر)"
+msgstr "Enter unit (e.g., kg, liter)"
+
+#: .\myapp\templates\myapp\add_product.html:45
+#: .\myapp\templates\myapp\edit_product.html:69
+msgid "الحد الأدنى للمخزون:"
+msgstr "Min Stock:"
+
+#: .\myapp\templates\myapp\add_product.html:46
+msgid "أدخل الحد الأدنى للمخزون"
+msgstr "Enter minimum stock"
+
+#: .\myapp\templates\myapp\add_product.html:49
+msgid "إضافة المنتج"
+msgstr "Add Product"
+
+#: .\myapp\templates\myapp\add_quantity.html:3
+#: .\myapp\templates\myapp\add_quantity.html:8
+msgid "إضافة كمية إلى منتج"
+msgstr "Add quantity to product"
+
+#: .\myapp\templates\myapp\add_quantity.html:9
+msgid "حدد المنتج ثم أدخل الكمية المراد إضافتها."
+msgstr "Select the product and enter the quantity to add."
+
+#: .\myapp\templates\myapp\add_quantity.html:25
+msgid "اختر المنتج:"
+msgstr "Choose Product:"
+
+#: .\myapp\templates\myapp\add_quantity.html:27
+msgid "ابحث عن المنتج"
+msgstr "Search for product"
+
+#: .\myapp\templates\myapp\add_quantity.html:48
+msgid "الكمية المتاحة:"
+msgstr "Available Quantity:"
+
+#: .\myapp\templates\myapp\add_quantity.html:53
+msgid "الكمية المراد إضافتها:"
+msgstr "Quantity to Add:"
+
+#: .\myapp\templates\myapp\add_quantity.html:57
+msgid "إضافة"
+msgstr "Add"
+
+#: .\myapp\templates\myapp\add_quantity.html:58
+msgid "رجوع"
+msgstr "Back"
+
+#: .\myapp\templates\myapp\add_quantity.html:120
+msgid "لا يوجد منتجات مطابقة"
+msgstr "No matching products"
+
+#: .\myapp\templates\myapp\base.html:8 .\myapp\templates\myapp\base.html:18
+#: .\myapp\templates\myapp\index.html:166
+#: .\myapp\templates\myapp\product_list.html:7
+#: .\myapp\templates\myapp\product_list.html:50
+msgid "إدارة المخزون"
+msgstr "Inventory Management"
+
+#: .\myapp\templates\myapp\base.html:20
+msgid "تبديل التنقل"
+msgstr "Toggle navigation"
+
+#: .\myapp\templates\myapp\base.html:26
+msgid "الصفحة الرئيسية"
+msgstr "Home"
+
+#: .\myapp\templates\myapp\base.html:32
+msgid "عرض المخزون"
+msgstr "View Inventory"
+
+#: .\myapp\templates\myapp\base.html:35
+msgid "التقارير"
+msgstr "Reports"
+
+#: .\myapp\templates\myapp\base.html:40
+#: .\myapp\templates\myapp\product_list.html:63
+msgid "استيراد من Excel"
+msgstr "Import from Excel"
+
+#: .\myapp\templates\myapp\base.html:43
+msgid "استيراد مواد خام"
+msgstr "Import Raw Materials"
+
+#: .\myapp\templates\myapp\base.html:44
+msgid "استيراد صيانة"
+msgstr "Import Maintenance"
+
+#: .\myapp\templates\myapp\chart.html:7 .\myapp\templates\myapp\chart.html:56
+msgid "تقرير المنتجات المسحوبة"
+msgstr "Products Withdrawn Report"
+
+#: .\myapp\templates\myapp\chart.html:64
+msgid "المنتجات الأكثر سحبًا"
+msgstr "Most Withdrawn Products"
+
+#: .\myapp\templates\myapp\chart.html:70
+msgid "كمية السحب الإجمالية"
+msgstr "Total Withdrawal Quantity"
+
+#: .\myapp\templates\myapp\chart.html:82
+msgid "لا توجد بيانات لعرض المنتجات المسحوبة."
+msgstr "No data to display withdrawn products."
+
+#: .\myapp\templates\myapp\chart.html:104 .\myapp\views.py:287
+msgid "الكمية المسحوبة"
+msgstr "Withdrawn Quantity"
+
+#: .\myapp\templates\myapp\chart.html:124
+msgid "المنتج"
+msgstr "Product"
+
+#: .\myapp\templates\myapp\confirm_delete.html:4
+#: .\myapp\templates\myapp\confirm_delete.html:8
+msgid "تأكيد الحذف"
+msgstr "Confirm Delete"
+
+#: .\myapp\templates\myapp\confirm_delete.html:5
+msgid "هل أنت متأكد أنك تريد حذف المنتج"
+msgstr "Are you sure you want to delete the product"
+
+#: .\myapp\templates\myapp\confirm_delete.html:5
+msgid "؟"
+msgstr "?"
+
+#: .\myapp\templates\myapp\confirm_delete.html:9
+msgid "إلغاء"
+msgstr "Cancel"
+
+#: .\myapp\templates\myapp\edit_product.html:7
+#: .\myapp\templates\myapp\edit_product.html:13
+msgid "تعديل منتج"
+msgstr "Edit Product"
+
+#: .\myapp\templates\myapp\edit_product.html:33
+msgid "حدثت بعض الأخطاء:"
+msgstr "Some errors occurred:"
+
+#: .\myapp\templates\myapp\edit_product.html:73
+#: .\myapp\templates\myapp\product_list.html:90
+msgid "تعديل"
+msgstr "Edit"
+
+#: .\myapp\templates\myapp\edit_product.html:96
+msgid "يرجى ملء جميع الحقول."
+msgstr "Please fill out all fields."
+
+#: .\myapp\templates\myapp\forget_password.html:7
+msgid "نسيت كلمة المرور"
+msgstr "Forgot Password"
+
+#: .\myapp\templates\myapp\forget_password.html:10
+#: .\myapp\templates\myapp\login.html:160
+msgid "نسيت كلمة المرور؟"
+msgstr "Forgot your password?"
+
+#: .\myapp\templates\myapp\forget_password.html:21
+msgid "إرسال رابط إعادة تعيين كلمة المرور"
+msgstr "Send password reset link"
+
+#: .\myapp\templates\myapp\forget_password.html:23
+#: .\myapp\templates\myapp\register.html:23
+msgid "العودة إلى تسجيل الدخول"
+msgstr "Back to login"
+
+#: .\myapp\templates\myapp\import_excel.html:7
+#: .\myapp\templates\myapp\import_excel.html:13
+msgid "استيراد بيانات Excel"
+msgstr "Import Excel Data"
+
+#: .\myapp\templates\myapp\import_excel.html:29
+msgid "اختر ملف Excel:"
+msgstr "Choose Excel file:"
+
+#: .\myapp\templates\myapp\import_excel.html:32
+msgid "استيراد"
+msgstr "Import"
+
+#: .\myapp\templates\myapp\import_excel.html:36
+msgid "يرجى تحميل ملف Excel بصيغة"
+msgstr "Please upload an Excel file in"
+
+#: .\myapp\templates\myapp\import_excel.html:36
+msgid "أو"
+msgstr "or"
+
+#: .\myapp\templates\myapp\import_excel.html:40
+msgid "مسح البيانات"
+msgstr "Clear Data"
+
+#: .\myapp\templates\myapp\import_excel.html:51
+msgid "يرجى اختيار ملف Excel."
+msgstr "Please select an Excel file."
+
+#: .\myapp\templates\myapp\import_excel.html:57
+msgid "يرجى اختيار ملف Excel بصيغة .xlsx أو .xls."
+msgstr "Please select an Excel file in .xlsx or .xls format."
+
+#: .\myapp\templates\myapp\import_maintenance.html:4
+msgid "رفع ملف Excel - صيانة"
+msgstr "Upload Excel File - Maintenance"
+
+#: .\myapp\templates\myapp\import_maintenance.html:8
+msgid "رفع واستيراد منتجات صيانة"
+msgstr "Upload and import maintenance products"
+
+#: .\myapp\templates\myapp\import_maintenance.html:17
+#: .\myapp\templates\myapp\import_raw_materials.html:17
+msgid "العودة لقائمة المنتجات"
+msgstr "Back to product list"
+
+#: .\myapp\templates\myapp\import_raw_materials.html:4
+msgid "رفع ملف Excel - مواد خام"
+msgstr "Upload Excel File - Raw Materials"
+
+#: .\myapp\templates\myapp\import_raw_materials.html:8
+msgid "رفع واستيراد مواد خام"
+msgstr "Upload and import raw materials"
+
+#: .\myapp\templates\myapp\index.html:8
+msgid "نظام إدارة المنتجات"
+msgstr "Product Management System"
+
+#: .\myapp\templates\myapp\index.html:169
+msgid "قائمة المنتجات"
+msgstr "Product List"
+
+#: .\myapp\templates\myapp\index.html:170
+#: .\myapp\templates\myapp\product_list.html:58
+msgid "إضافة كمية"
+msgstr "Add Quantity"
+
+#: .\myapp\templates\myapp\index.html:171
+#: .\myapp\templates\myapp\product_list.html:59
+msgid "سحب كمية"
+msgstr "Withdraw Quantity"
+
+#: .\myapp\templates\myapp\index.html:172
+msgid "المنتجات ذات المخزون المنخفض"
+msgstr "Low Stock Products"
+
+#: .\myapp\templates\myapp\index.html:175
+#: .\myapp\templates\myapp\product_list.html:45
+msgid "الرئيسية"
+msgstr "Home"
+
+#: .\myapp\templates\myapp\index.html:176
+#: .\myapp\templates\myapp\index.html:198
+msgid "عن الموقع"
+msgstr "About Us"
+
+#: .\myapp\templates\myapp\index.html:177
+#: .\myapp\templates\myapp\index.html:205
+msgid "اتصل بنا"
+msgstr "Contact Us"
+
+#: .\myapp\templates\myapp\index.html:181
+msgid "تسجيل الخروج"
+msgstr "Logout"
+
+#: .\myapp\templates\myapp\index.html:189
+msgid "مرحبًا بكم في نظام إدارة المنتجات"
+msgstr "Welcome to the Product Management System"
+
+#: .\myapp\templates\myapp\index.html:190
+msgid "إدارة متكاملة وسهلة لمنتجاتك وحركاتك اليومية."
+msgstr ""
+"Integrated and easy management of your products and daily transactions."
+
+#: .\myapp\templates\myapp\index.html:199
+msgid ""
+"هذا النظام يتيح لك إدارة المنتجات، تتبع الحركات، وإنشاء التقارير بكل سهولة."
+msgstr ""
+"This system allows you to manage products, track transactions, and generate "
+"reports with ease."
+
+#: .\myapp\templates\myapp\index.html:206
+msgid "البريد الإلكتروني:"
+msgstr "Email:"
+
+#: .\myapp\templates\myapp\index.html:207
+msgid "الهاتف:"
+msgstr "Phone:"
+
+#: .\myapp\templates\myapp\index.html:212
+msgid "© 2025 جميع الحقوق محفوظة."
+msgstr "© 2025 All rights reserved."
+
+#: .\myapp\templates\myapp\login.html:8
+msgid "تسجيل الدخول - برنامج إدارة المخازن"
+msgstr "Login - Inventory Management System"
+
+#: .\myapp\templates\myapp\login.html:142
+msgid "تغيير اللغة"
+msgstr ""
+
+#: .\myapp\templates\myapp\login.html:145
+#: .\myapp\templates\myapp\login.html:157
+#: .\myapp\templates\myapp\password_reset_done.html:20
+msgid "تسجيل الدخول"
+msgstr "Login"
+
+#: .\myapp\templates\myapp\login.html:150
+msgid "اسم المستخدم:"
+msgstr "Username:"
+
+#: .\myapp\templates\myapp\login.html:151
+msgid "أدخل اسم المستخدم"
+msgstr "Enter username"
+
+#: .\myapp\templates\myapp\login.html:154
+msgid "كلمة المرور:"
+msgstr "Password:"
+
+#: .\myapp\templates\myapp\login.html:155
+msgid "أدخل كلمة المرور"
+msgstr "Enter password"
+
+#: .\myapp\templates\myapp\login.html:161
+#: .\myapp\templates\myapp\register.html:7
+#: .\myapp\templates\myapp\register.html:10
+msgid "تسجيل حساب جديد"
+msgstr "Register new account"
+
+#: .\myapp\templates\myapp\low_stock.html:4
+#: .\myapp\templates\myapp\low_stock.html:22
+msgid "نواقص المخزون"
+msgstr "Low Stock"
+
+#: .\myapp\templates\myapp\low_stock.html:9
+#, fuzzy
+#| msgid "الرسم البياني"
+msgid "المستخدم الحالي"
+msgstr "Chart"
+
+#: .\myapp\templates\myapp\low_stock.html:10
+msgid "المجموعات"
+msgstr ""
+
+#: .\myapp\templates\myapp\low_stock.html:18
+msgid "لا ينتمي لأي مجموعات."
+msgstr ""
+
+#: .\myapp\templates\myapp\low_stock.html:25
+#: .\myapp\templates\myapp\product_list.html:53
+#: .\myapp\templates\myapp\report.html:15
+#: .\myapp\templates\myapp\reports.html:16
+msgid "ابحث عن منتج..."
+msgstr "Search for a product..."
+
+#: .\myapp\templates\myapp\low_stock.html:35
+#: .\myapp\templates\myapp\product_list.html:74
+msgid "الرمز"
+msgstr "Code"
+
+#: .\myapp\templates\myapp\low_stock.html:36
+msgid "الكمية المتوفرة"
+msgstr "Available Quantity"
+
+#: .\myapp\templates\myapp\low_stock.html:38
+msgid "الحد الأدنى للمخزون"
+msgstr "Min Stock"
+
+#: .\myapp\templates\myapp\low_stock.html:39
+msgid "الحالة"
+msgstr "Status"
+
+#: .\myapp\templates\myapp\low_stock.html:51
+msgid "نقص"
+msgstr "Low"
+
+#: .\myapp\templates\myapp\low_stock.html:51
+msgid "متوفر"
+msgstr "Available"
+
+#: .\myapp\templates\myapp\low_stock.html:58
+msgid "لا توجد منتجات ناقصة في المخزون حالياً."
+msgstr "No products are currently low in stock."
+
+#: .\myapp\templates\myapp\password_reset_body.txt:3
+msgid "مرحباً"
+msgstr "Hello"
+
+#: .\myapp\templates\myapp\password_reset_body.txt:5
+msgid "لقد طلبت إعادة تعيين كلمة المرور لحسابك في برنامج إدارة المخازن."
+msgstr ""
+"You've requested a password reset for your account in the inventory "
+"management system."
+
+#: .\myapp\templates\myapp\password_reset_body.txt:7
+msgid "يرجى الضغط على الرابط التالي لإعادة تعيين كلمة المرور:"
+msgstr "Please click the following link to reset your password:"
+
+#: .\myapp\templates\myapp\password_reset_body.txt:10
+msgid "إذا لم تطلب إعادة تعيين كلمة المرور، يمكنك تجاهل هذه الرسالة."
+msgstr "If you didn't request a password reset, you can ignore this message."
+
+#: .\myapp\templates\myapp\password_reset_body.txt:12
+msgid "شكراً،"
+msgstr "Thank you,"
+
+#: .\myapp\templates\myapp\password_reset_body.txt:13
+msgid "فريق برنامج إدارة المخازن"
+msgstr "The Inventory Management System Team"
+
+#: .\myapp\templates\myapp\password_reset_confirm.html:7
+#: .\myapp\templates\myapp\password_reset_confirm.html:10
+msgid "إعادة تعيين كلمة المرور"
+msgstr "Reset Password"
+
+#: .\myapp\templates\myapp\password_reset_confirm.html:21
+msgid "كلمة المرور الجديدة:"
+msgstr "New password:"
+
+#: .\myapp\templates\myapp\password_reset_confirm.html:25
+msgid "تأكيد كلمة المرور الجديدة:"
+msgstr "Confirm new password:"
+
+#: .\myapp\templates\myapp\password_reset_confirm.html:28
+msgid "تعيين كلمة المرور الجديدة"
+msgstr "Set new password"
+
+#: .\myapp\templates\myapp\password_reset_done.html:7
+#: .\myapp\templates\myapp\password_reset_done.html:10
+msgid "تمت عملية إعادة تعيين كلمة المرور"
+msgstr "Password reset successful"
+
+#: .\myapp\templates\myapp\password_reset_done.html:19
+msgid ""
+"لقد تم إرسالك إلى هذه الصفحة بعد محاولة إعادة تعيين كلمة المرور. يرجى التحقق "
+"من رسالة البريد الإلكتروني الخاصة بك لمعرفة حالة العملية."
+msgstr ""
+"You've been sent to this page after attempting to reset your password. "
+"Please check your email for the status of the process."
+
+#: .\myapp\templates\myapp\product_list.html:60
+msgid "عرض النواقص"
+msgstr "View Low Stock"
+
+#: .\myapp\templates\myapp\product_list.html:61
+msgid "عرض التقارير"
+msgstr "View Reports"
+
+#: .\myapp\templates\myapp\product_list.html:62
+msgid "الرسم البياني"
+msgstr "Chart"
+
+#: .\myapp\templates\myapp\product_list.html:64
+#: .\myapp\templates\myapp\report.html:10
+msgid "تصدير إلى Excel"
+msgstr "Export to Excel"
+
+#: .\myapp\templates\myapp\product_list.html:69
+msgid "عدد المنتجات:"
+msgstr "Number of products:"
+
+#: .\myapp\templates\myapp\product_list.html:78
+msgid "الإجراءات"
+msgstr "Actions"
+
+#: .\myapp\templates\myapp\product_list.html:91
+msgid "هل أنت متأكد من الحذف؟"
+msgstr "Are you sure you want to delete?"
+
+#: .\myapp\templates\myapp\product_list.html:91
+msgid "حذف"
+msgstr "Delete"
+
+#: .\myapp\templates\myapp\product_list.html:98
+msgid "لا يوجد منتجات في المخزون حاليًا."
+msgstr "No products are currently in stock."
+
+#: .\myapp\templates\myapp\received_report.html:7
+#: .\myapp\templates\myapp\received_report.html:45
+msgid "تقرير الكميات المستلمة"
+msgstr "Received Quantities Report"
+
+#: .\myapp\templates\myapp\received_report.html:48
+msgid "ابحث عن منتج أو تاريخ..."
+msgstr "Search for a product or date..."
+
+#: .\myapp\templates\myapp\received_report.html:58
+#: .\myapp\templates\myapp\report.html:25
+#: .\myapp\templates\myapp\reports.html:29 .\myapp\views.py:221
+#: .\myapp\views.py:288
+msgid "التاريخ"
+msgstr "Date"
+
+#: .\myapp\templates\myapp\received_report.html:72
+msgid "لا توجد حركات مستلمة حاليًا."
+msgstr "No received transactions currently."
+
+#: .\myapp\templates\myapp\received_report.html:77
+msgid "تنزيل التقرير كملف Excel"
+msgstr "Download report as Excel file"
+
+#: .\myapp\templates\myapp\register.html:21
+msgid "تسجيل"
+msgstr "Register"
+
+#: .\myapp\templates\myapp\report.html:11
+msgid "تصدير إلى PDF"
+msgstr "Export to PDF"
+
+#: .\myapp\templates\myapp\report.html:40
+#: .\myapp\templates\myapp\reports.html:45
+#: .\myapp\templates\myapp\reports.html:51
+msgid "لا توجد حركات لعرضها في هذا التقرير."
+msgstr "No transactions to display in this report."
+
+#: .\myapp\templates\myapp\reports.html:4
+#: .\myapp\templates\myapp\reports.html:8 .\myapp\views.py:111
+msgid "سجل الحركات"
+msgstr "Transaction Log"
+
+#: .\myapp\templates\myapp\reports.html:11
+msgid "تنزيل تقرير الاستلام (Excel)"
+msgstr "Download Received Report (Excel)"
+
+#: .\myapp\templates\myapp\reports.html:12
+msgid "تنزيل تقرير السحب (Excel)"
+msgstr "Download Withdrawn Report (Excel)"
+
+#: .\myapp\templates\myapp\reports.html:26
+msgid "نوع الحركة"
+msgstr "Movement Type"
+
+#: .\myapp\views.py:38
+msgid "اسم المستخدم أو كلمة المرور غير صحيحة."
+msgstr "Incorrect username or password."
+
+#: .\myapp\views.py:44
+msgid "تم تسجيل الخروج بنجاح."
+msgstr "Logged out successfully."
+
+#: .\myapp\views.py:94
+msgid "حدث خطأ في إضافة المنتج. يرجى التحقق من النموذج."
+msgstr "An error occurred while adding the product. Please check the form."
+
+#: .\myapp\views.py:125
+msgid "تم حذف جميع المنتجات الخاصة بك بنجاح."
+msgstr "All your products have been deleted successfully."
+
+#: .\myapp\views.py:147
+msgid "حدث خطأ في تعديل المنتج. يرجى التحقق من النموذج."
+msgstr "An error occurred while editing the product. Please check the form."
+
+#: .\myapp\views.py:160
+msgid "تم حذف المنتج بنجاح!"
+msgstr "Product deleted successfully!"
+
+#: .\myapp\views.py:172 .\myapp\views.py:241
+msgid "الكمية يجب أن تكون أكبر من صفر"
+msgstr "Quantity must be greater than zero"
+
+#: .\myapp\views.py:220
+#, fuzzy
+#| msgid "الكمية المسحوبة"
+msgid "الكمية المستلمة"
+msgstr "Withdrawn Quantity"
+
+#: .\myapp\views.py:222 .\myapp\views.py:289
+#, fuzzy
+#| msgid "الكمية المتاحة:"
+msgid "الكمية بعد التعديل"
+msgstr "Available Quantity:"
+
+#: .\myapp\views.py:246
+msgid "الكمية المسحوبة أكبر من المخزون المتوفر."
+msgstr "The withdrawn quantity is greater than the available stock."
+
+#: .\myapp\views.py:307
+msgid "لا توجد بيانات لعرض الرسم البياني."
+msgstr "No data to display the chart."
+
+#: .\myapp\views.py:383
+msgid "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني."
+msgstr "A password reset link has been sent to your email address."
+
+#: .\myapp\views.py:386
+msgid "هذا البريد الإلكتروني غير مسجل."
+msgstr "This email address is not registered."
+
+#: .\myapp\views.py:405
+msgid "تم تعيين كلمة المرور الجديدة بنجاح. يمكنك تسجيل الدخول الآن."
+msgstr "Your new password has been set successfully. You can log in now."
+
+#: .\myapp\views.py:408
+msgid "كلمتا المرور غير متطابقتين."
+msgstr "The two passwords did not match."
+
+#: .\myapp\views.py:412
+msgid "رابط إعادة تعيين كلمة المرور غير صالح."
+msgstr "The password reset link is invalid."
+
+#: .\myapp\views.py:433
+msgid "تم إنشاء حسابك بنجاح. يمكنك تسجيل الدخول الآن."
+msgstr "Your account has been created successfully. You can log in now."
+
+#: .\myapp\views.py:446 .\myapp\views.py:480 .\myapp\views.py:514
+msgid "خطأ: ملف Excel لا يحتوي على جميع الأعمدة المطلوبة."
+msgstr "Error: The Excel file does not contain all the required columns."
+
+#: .\myapp\views.py:451
+msgid "خطأ: المستخدم الحالي ليس لديه فريق محدد."
+msgstr "Error: The current user does not have a team assigned."
+
+#: .\myapp\views.py:469
+msgid "تم استيراد البيانات بنجاح."
+msgstr "Data imported successfully."
+
+#: .\myapp\views.py:485
+msgid "خطأ: لم يتم العثور على فريق \"فريق المواد الخام\"."
+msgstr "Error: The \"Raw Materials Team\" was not found."
+
+#: .\myapp\views.py:503
+msgid "تم استيراد منتجات المواد الخام بنجاح."
+msgstr "Raw material products imported successfully."
+
+#: .\myapp\views.py:519
+msgid "خطأ: لم يتم العثور على فريق \"فريق الصيانة\"."
+msgstr "Error: The \"Maintenance Team\" was not found."
+
+#: .\myapp\views.py:537
+msgid "تم استيراد منتجات الصيانة بنجاح."
+msgstr "Maintenance products imported successfully."
+
+msgid "فريق المواد الخام"
+msgstr "Raw Materials Team"
+
+msgid "فريق الصيانة"
+msgstr "Maintenance Team"
+
+msgid "استلام"
+msgstr "Receipt"
+
+msgid "سحب"
+msgstr "Withdrawal"
+
+msgid "سحب كمية من منتج"
+msgstr "Withdraw quantity from product"
+
+msgid "حدد المنتج ثم أدخل الكمية المراد سحبها."
+msgstr "Select the product and then enter the quantity to withdraw."
+
+msgid "الكمية المراد سحبها:"
+msgstr "Quantity to withdraw:"
+
+msgid "الكمية الحالية"
+msgstr "Current Quantity"
+
+msgid "الكمية المضافة"
+msgstr "Quantity Added"
+
+msgid "الكمية المحدثة"
+msgstr "Updated Quantity"
+
+msgid "الكمية المدخلة"
+msgstr "Entered Quantity"
+
+msgid "الكمية الصادرة"
+msgstr "Quantity Dispatched"
+

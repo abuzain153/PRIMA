@@ -1,10 +1,11 @@
+{% load i18n %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة المنتجات</title>
+    <title>{% translate "نظام إدارة المنتجات" %}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <style>
         /* إعدادات عامة */
@@ -162,26 +163,31 @@
     <nav class="navbar">
         <ul class="nav">
             <li class="dropdown">
-                <button class="dropdown-button">إدارة المخزون 📦</button>
+                <button class="dropdown-button">{% translate "إدارة المخزون" %} 📦</button>
                 <div class="dropdown-content">
-                    <a href="{% url 'add_product' %}">إضافة منتج جديد</a>
-                    <a href="{% url 'product_list' %}">قائمة المنتجات</a>
-                    <a href="{% url 'add_quantity' %}">إضافة كمية</a>
-                    <a href="{% url 'withdraw_quantity' %}">سحب كمية</a>
-                    <a href="{% url 'low_stock_products' %}">المنتجات ذات المخزون المنخفض</a>
+                    <a href="{% url 'add_product' %}">{% translate "إضافة منتج جديد" %}</a>
+                    <a href="{% url 'product_list' %}">{% translate "قائمة المنتجات" %}</a>
+                    <a href="{% url 'add_quantity' %}">{% translate "إضافة كمية" %}</a>
+                    <a href="{% url 'withdraw_quantity' %}">{% translate "سحب كمية" %}</a>
+                    <a href="{% url 'low_stock_products' %}">{% translate "المنتجات ذات المخزون المنخفض" %}</a>
                 </div>
             </li>
-            <li><a href="{% url 'home' %}">الرئيسية</a></li>
-            <li><a href="#about">عن الموقع</a></li>
-            <li><a href="#contact">اتصل بنا</a></li>
-            <li><a href="{% url 'logout' %}">تسجيل الخروج</a></li>
+            <li><a href="{% url 'home' %}">{% translate "الرئيسية" %}</a></li>
+            <li><a href="#about">{% translate "عن الموقع" %}</a></li>
+            <li><a href="#contact">{% translate "اتصل بنا" %}</a></li>
+            <li>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; color: white; text-decoration: none; font-size: 16px; cursor: pointer;">{% translate "تسجيل الخروج" %}</button>
+                </form>
+            </li>
         </ul>
     </nav>
 
     <header class="hero">
         <div class="hero-text">
-            <h1>مرحبًا بكم في نظام إدارة المنتجات</h1>
-            <p>إدارة متكاملة وسهلة لمنتجاتك وحركاتك اليومية.</p>
+            <h1>{% translate "مرحبًا بكم في نظام إدارة المنتجات" %}</h1>
+            <p>{% translate "إدارة متكاملة وسهلة لمنتجاتك وحركاتك اليومية." %}</p>
         </div>
         <div class="hero-image">
         </div>
@@ -189,20 +195,21 @@
 
     <section id="about" class="section">
         <div class="container">
-            <h2>عن الموقع</h2>
-            <p>هذا النظام يتيح لك إدارة المنتجات، تتبع الحركات، وإنشاء التقارير بكل سهولة.</p>
+            <h2>{% translate "عن الموقع" %}</h2>
+            <p>{% translate "هذا النظام يتيح لك إدارة المنتجات، تتبع الحركات، وإنشاء التقارير بكل سهولة." %}</p>
         </div>
     </section>
 
-    <section id="contact" class="section">
+   <section id="contact" class="section">
         <div class="container">
-            <h2>اتصل بنا</h2>
-            <p>للتواصل معنا، يمكنك مراسلتنا عبر البريد الإلكتروني: <a href="mailto:info@mysite.com">info@mysite.com</a></p>
+            <h2>{% translate "اتصل بنا" %}</h2>
+            <p>📧 {% translate "البريد الإلكتروني:" %} <a href="mailto:Warhs@prima-ind.co.il">Warhs@prima-ind.co.il</a></p>
+            <p>📞 {% translate "الهاتف:" %} <a href="tel:0509243783">0509243783</a></p>
         </div>
     </section>
 
     <footer>
-        <p>© 2025 جميع الحقوق محفوظة.</p>
+        <p>{% translate "© 2025 جميع الحقوق محفوظة." %}</p>
     </footer>
 </body>
 </html>

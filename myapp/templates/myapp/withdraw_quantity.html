@@ -1,12 +1,38 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}سحب كمية من منتج{% endblock %}
+{% block title %}{% translate "سحب كمية من منتج" %}{% endblock %}
 
 {% block content %}
+<style>
+    .mb-3 {
+        position: relative;
+    }
+    .input-group {
+        display: flex;
+        align-items: center;
+    }
+    #product-suggestions {
+        z-index: 2000 !important;
+        position: absolute !important;
+        top: calc(100% + 5px);
+        left: 0;
+        width: 300px !important;
+        background-color: white !important;
+        text-align: right !important;
+        border: 1px solid #ccc !important;
+        max-height: 200px !important;
+        overflow-y: auto !important;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .list-group-item {
+        width: 100%;
+    }
+</style>
 <div class="container">
     <div class="form-container mt-5 p-4 border rounded">
-        <h1 class="text-center">سحب كمية من منتج</h1>
-        <p class="text-center text-muted">حدد المنتج ثم أدخل الكمية المراد سحبها.</p>
+        <h1 class="text-center">{% translate "سحب كمية من منتج" %}</h1>
+        <p class="text-center text-muted">{% translate "حدد المنتج ثم أدخل الكمية المراد سحبها." %}</p>
 
         {% if messages %}
         <div class="alert alert-dismissible fade show mt-3">
@@ -22,67 +48,301 @@
         <form method="post" class="mt-4">
             {% csrf_token %}
             <div class="mb-3">
-                <label for="product_id" class="form-label">اختر المنتج:</label>
-                <select name="product_id" id="product_id" class="form-select" required>
-                    <option value="">اختر منتج</option>
-                    {% for product in products %}
-                        <option value="{{ product.id }}" data-code="{{ product.product_code }}" data-unit="{{ product.unit }}" data-available="{{ product.available_quantity }}">
-                            {{ product.product_name }} ({{ product.product_code }})
-                        </option>
-                    {% endfor %}
-                </select>
-                <small class="info-text">يمكنك اختيار المنتج من القائمة لعرض التفاصيل.</small>
+                <label for="product-search-input" class="form-label">{% translate "اختر المنتج:" %}</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="product-search-input" placeholder="{% translate "ابحث عن المنتج" %}">
+                    <button class="btn btn-outline-secondary" type="button" id="toggle-product-list">
+                        <i class="bi bi-caret-down-fill"></i>
+                    </button>
+                    <button class="btn btn-outline-info" type="button" id="start-barcode-scanner">
+                        <i class="bi bi-upc-scan"></i> {% translate "قراءة الباركود" %}
+                    </button>
+                    <button class="btn btn-outline-danger" type="button" id="stop-barcode-scanner" style="display: none;">
+                        <i class="bi bi-stop-circle-fill"></i> {% translate "إيقاف الكاميرا" %}
+                    </button>
+                </div>
+                <div class="list-group mt-2" id="product-suggestions" style="display: none;">
+                    </div>
+                <input type="hidden" name="product_id" id="selected-product-id">
+            </div>
+
+            <div id="barcode-scanner-container" style="display: none; margin-top: 10px;">
+                <video id="barcode-scanner-video" width="300" height="200" autoplay></video>
             </div>
 
             <div class="mb-3">
-                <label for="product_name" class="form-label">اسم المنتج:</label>
+                <label for="product_name" class="form-label">{% translate "اسم المنتج:" %}</label>
                 <input type="text" id="product_name" class="form-control" readonly>
             </div>
 
             <div class="mb-3">
-                <label for="unit" class="form-label">الوحدة:</label>
+                <label for="unit" class="form-label">{% translate "الوحدة:" %}</label>
                 <input type="text" id="unit" class="form-control" readonly>
             </div>
 
             <div class="mb-3">
-                <label for="available_quantity" class="form-label">الكمية المتاحة:</label>
+                <label for="available_quantity" class="form-label">{% translate "الكمية المتاحة:" %}</label>
                 <input type="text" id="available_quantity" class="form-control" readonly>
             </div>
 
             <div class="mb-3">
-                <label for="quantity_to_withdraw" class="form-label">الكمية المراد سحبها:</label>
-                <input type="number" name="quantity_to_withdraw" id="quantity_to_withdraw" class="form-control" required step="any" placeholder="أدخل الكمية">
+                <label for="quantity_to_withdraw" class="form-label">{% translate "الكمية المراد سحبها:" %}</label>
+                <input type="number" name="quantity_to_withdraw" id="quantity_to_withdraw" class="form-control" required min="0" step="any" placeholder="{% translate "أدخل الكمية" %}">
             </div>
 
-            <button type="submit" class="btn btn-primary w-100 mb-2">سحب</button>
-            <button type="button" onclick="window.history.back();" class="btn btn-secondary w-100">رجوع</button>
-
-            {% if success %}
-                <div class="alert alert-success mt-3">
-                    <strong>تم السحب بنجاح!</strong>
-                </div>
-            {% elif error %}
-                <div class="alert alert-danger mt-3">
-                    <strong>{{ error }}</strong>
-                </div>
-            {% endif %}
+            <button type="submit" class="btn btn-primary w-100">{% translate "سحب" %}</button>
+            <button type="button" onclick="window.history.back();" class="btn btn-secondary w-100 mt-2">{% translate "رجوع" %}</button>
         </form>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.getElementById('product_id').addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        if (selectedOption.value) {
-            document.getElementById('product_name').value = selectedOption.textContent;
-            document.getElementById('unit').value = selectedOption.dataset.unit;
-            document.getElementById('available_quantity').value = selectedOption.dataset.available;
+    const startBarcodeScannerButton = document.getElementById('start-barcode-scanner');
+    const stopBarcodeScannerButton = document.getElementById('stop-barcode-scanner');
+    const barcodeScannerContainer = document.getElementById('barcode-scanner-container');
+    const barcodeScannerVideo = document.getElementById('barcode-scanner-video');
+    const productSearchInput = document.getElementById('product-search-input');
+    const toggleProductListButton = document.getElementById('toggle-product-list');
+    const productSuggestionsList = document.getElementById('product-suggestions');
+    const selectedProductIdInput = document.getElementById('selected-product-id');
+    const productNameInput = document.getElementById('product_name');
+    const unitInput = document.getElementById('unit');
+    const availableQuantityInput = document.getElementById('available_quantity');
+    const quantityToWithdrawInput = document.getElementById('quantity_to_withdraw');
+
+    let scannerActive = false;
+    let barcodeScanner = null;
+    let isListVisible = false;
+
+    function toggleProductSuggestions(show) {
+        isListVisible = show;
+        productSuggestionsList.style.display = isListVisible ? 'block' : 'none';
+        // **تعديل:** نتأكد إن ماسح الباركود مخفي لما نظهر الاقتراحات ونتحقق من وجود Quagga
+        if (isListVisible) {
+            barcodeScannerContainer.style.display = 'none';
+            stopBarcodeScannerButton.style.display = 'none';
+            scannerActive = false;
+            if (typeof Quagga !== 'undefined' && Quagga && Quagga.inputStream) {
+                try {
+                    Quagga.stop();
+                } catch (error) {
+                    console.error("Error stopping Quagga:", error);
+                }
+            }
+            // إيقاف تدفق الفيديو عند إخفاء قائمة الاقتراحات
+            if (barcodeScannerVideo.srcObject) {
+                const stream = barcodeScannerVideo.srcObject;
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                barcodeScannerVideo.srcObject = null;
+            }
+        }
+        if (isListVisible && productSuggestionsList.innerHTML === '') {
+            fetchProducts(''); // Load all products initially when list is opened
+        }
+    }
+
+    toggleProductListButton.addEventListener('click', function() {
+        toggleProductSuggestions(!isListVisible);
+    });
+
+    productSearchInput.addEventListener('input', function() {
+        const searchText = this.value.trim();
+        fetchProducts(searchText);
+        if (searchText) {
+            toggleProductSuggestions(true);
         } else {
-            document.getElementById('product_name').value = '';
-            document.getElementById('unit').value = '';
-            document.getElementById('available_quantity').value = '';
+            toggleProductSuggestions(false);
+        }
+        // **تعديل إضافي هنا عشان نتأكد إن Quagga متوقفة لما بنبدأ نكتب في البحث ونتحقق من وجود Quagga**
+        if (typeof Quagga !== 'undefined' && Quagga && Quagga.inputStream) {
+            try {
+                Quagga.stop();
+            } catch (error) {
+                console.error("Error stopping Quagga:", error);
+            }
+            scannerActive = false;
+            barcodeScannerContainer.style.display = 'none';
+            stopBarcodeScannerButton.style.display = 'none';
+            // إيقاف تدفق الفيديو عند بدء الكتابة في البحث
+            if (barcodeScannerVideo.srcObject) {
+                const stream = barcodeScannerVideo.srcObject;
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                barcodeScannerVideo.srcObject = null;
+            }
         }
     });
+
+    function fetchProducts(searchText) {
+        fetch(`/products/get_products_by_name/?name=${searchText}`)
+            .then(response => response.json())
+            .then(data => {
+                productSuggestionsList.innerHTML = '';
+                data.forEach(product => {
+                    const listItem = document.createElement('a');
+                    listItem.classList.add('list-group-item', 'list-group-item-action');
+                    listItem.style.width = '100%';
+                    listItem.style.textAlign = 'right';
+                    listItem.textContent = `${product.product_name} (${product.product_code})`;
+                    listItem.dataset.productId = product.id;
+                    listItem.dataset.productName = product.product_name;
+                    listItem.dataset.unit = product.unit || '';
+                    listItem.dataset.available = product.quantity || '';
+                    listItem.addEventListener('click', function() {
+                        productSearchInput.value = this.dataset.productName;
+                        selectedProductIdInput.value = this.dataset.productId;
+                        productNameInput.value = this.dataset.productName;
+                        unitInput.value = this.dataset.unit || '';
+                        availableQuantityInput.value = this.dataset.available || '';
+                        toggleProductSuggestions(false);
+                    });
+                    productSuggestionsList.appendChild(listItem);
+                });
+                if (data.length === 0 && searchText) {
+                    const listItem = document.createElement('a');
+                    listItem.classList.add('list-group-item', 'list-group-item-action', 'disabled');
+                    listItem.style.width = '100%';
+                    listItem.style.textAlign = 'right';
+                    listItem.textContent = '{% translate "لا يوجد منتجات مطابقة" %}';
+                    productSuggestionsList.appendChild(listItem);
+                }
+            });
+    }
+
+    productSearchInput.addEventListener('blur', function() {
+        setTimeout(() => {
+            if (!productSuggestionsList.matches(':hover')) {
+                toggleProductSuggestions(false);
+            }
+        }, 200);
+    });
+
+    productSearchInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+        }
+    });
+
+    startBarcodeScannerButton.addEventListener('click', function() {
+        scannerActive = !scannerActive;
+        barcodeScannerContainer.style.display = scannerActive ? 'block' : 'none';
+        stopBarcodeScannerButton.style.display = scannerActive ? 'inline-block' : 'none';
+        if (scannerActive) {
+            toggleProductSuggestions(false);
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                    .then(function(stream) {
+                        barcodeScannerVideo.srcObject = stream;
+                        if (typeof Quagga !== 'undefined') {
+                            Quagga.init({
+                                inputStream : {
+                                    name : "Live",
+                                    type : "LiveStream",
+                                    target: barcodeScannerVideo.parentElement,
+                                    constraints: {
+                                        facingMode: "environment"
+                                    }
+                                },
+                                decoder : {
+                                    readers : ["code_128_reader"]
+                                }
+                            }, function(err) {
+                                if (err) {
+                                    console.error(err);
+                                    return
+                                }
+                                console.log("Quagga initialization successful.");
+                                Quagga.start();
+                            });
+
+                            Quagga.onDetected(function(result) {
+                                const barcode = result.codeResult.code;
+                                console.log("Barcode detected and read: ", barcode);
+                                Quagga.stop();
+                                scannerActive = false;
+                                barcodeScannerContainer.style.display = 'none';
+                                stopBarcodeScannerButton.style.display = 'none';
+                                if (productSearchInput.value.trim()) {
+                                    toggleProductSuggestions(true);
+                                }
+                                sendBarcodeToServer(barcode);
+                            });
+                        } else {
+                            console.warn("QuaggaJS library not found.");
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error("Couldn't access video stream: ", error);
+                        barcodeScannerContainer.style.display = 'none';
+                        stopBarcodeScannerButton.style.display = 'none';
+                        scannerActive = false;
+                    });
+            }
+        } else if (!scannerActive && typeof Quagga !== 'undefined' && Quagga && Quagga.inputStream) {
+            try {
+                Quagga.stop();
+            } catch (error) {
+                console.error("Error stopping Quagga:", error);
+            }
+            stopBarcodeScannerButton.style.display = 'none';
+            if (productSearchInput.value.trim()) {
+                toggleProductSuggestions(true);
+            }
+            if (barcodeScannerVideo.srcObject) {
+                const stream = barcodeScannerVideo.srcObject;
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                barcodeScannerVideo.srcObject = null;
+            }
+        }
+    });
+
+    stopBarcodeScannerButton.addEventListener('click', function() {
+        if (scannerActive && typeof Quagga !== 'undefined' && Quagga && Quagga.inputStream) {
+            try {
+                Quagga.stop();
+            } catch (error) {
+                console.error("Error stopping Quagga:", error);
+            }
+        }
+        scannerActive = false;
+        barcodeScannerContainer.style.display = 'none';
+        stopBarcodeScannerButton.style.display = 'none';
+        if (productSearchInput.value.trim()) {
+            toggleProductSuggestions(true);
+        }
+        if (barcodeScannerVideo.srcObject) {
+            const stream = barcodeScannerVideo.srcObject;
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
+            barcodeScannerVideo.srcObject = null;
+        }
+    });
+
+    function sendBarcodeToServer(barcode) {
+        fetch(`/products/get_product_by_barcode/?barcode=${barcode}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.id) {
+                    selectedProductIdInput.value = data.id;
+                    productSearchInput.value = data.product_name;
+                    productNameInput.value = data.product_name;
+                    unitInput.value = data.unit || '';
+                    availableQuantityInput.value = data.quantity || '';
+                } else {
+                    alert("{% translate 'لم يتم العثور على منتج بهذا الباركود' %}");
+                    productSearchInput.value = '';
+                    selectedProductIdInput.value = '';
+                    productNameInput.value = '';
+                    unitInput.value = '';
+                    availableQuantityInput.value = '';
+                }
+            })
+            .catch(error => {
+                console.error("Error sending barcode to server: ", error);
+                alert("{% translate 'حدث خطأ أثناء البحث عن المنتج' %}");
+            });
+    }
 </script>
 {% endblock %}

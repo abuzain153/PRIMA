@@ -1,9 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة المخزون</title>
+    <title>{% translate "إدارة المخزون" %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -32,23 +33,23 @@
 <body>
 
 <div class="container mt-5">
-    <h1 class="text-center mb-4">إدارة المخزون</h1>
+    <h1 class="text-center mb-4">{% translate "إدارة المخزون" %}</h1>
 
     <div class="table-container">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="mb-0">قائمة المنتجات</h3>
-            <a href="{% url 'add_product' %}" class="btn btn-success">إضافة منتج جديد</a>
+            <h3 class="mb-0">{% translate "قائمة المنتجات" %}</h3>
+            <a href="{% url 'add_product' %}" class="btn btn-success">{% translate "إضافة منتج جديد" %}</a>
         </div>
 
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th>رقم المنتج</th>
-                    <th>اسم المنتج</th>
-                    <th>الكمية</th>
-                    <th>الوحدة</th>
-                    <th>الحد الأدنى</th>
-                    <th>الإجراءات</th>
+                    <th>{% translate "رقم المنتج" %}</th>
+                    <th>{% translate "اسم المنتج" %}</th>
+                    <th>{% translate "الكمية" %}</th>
+                    <th>{% translate "الوحدة" %}</th>
+                    <th>{% translate "الحد الأدنى" %}</th>
+                    <th>{% translate "الإجراءات" %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -61,14 +62,14 @@
                             <td>{{ product.unit }}</td>
                             <td>{{ product.min_stock }}</td>
                             <td>
-                                <a href="{% url 'edit_product' product.id %}" class="btn btn-primary btn-sm btn-action">تعديل</a>
-                                <a href="{% url 'delete_product' product.id %}" class="btn btn-danger btn-sm btn-action" onclick="return confirm('هل أنت متأكد من حذف هذا المنتج؟');">حذف</a>
+                                <a href="{% url 'edit_product' product.id %}" class="btn btn-primary btn-sm btn-action">{% translate "تعديل" %}</a>
+                                <a href="{% url 'delete_product' product.id %}" class="btn btn-danger btn-sm btn-action" onclick="return confirm('{% translate "هل أنت متأكد من حذف هذا المنتج؟" %}');">{% translate "حذف" %}</a>
                             </td>
                         </tr>
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="6" class="text-center text-muted">لا توجد منتجات في المخزون حاليًا.</td>
+                        <td colspan="6" class="text-center text-muted">{% translate "لا توجد منتجات في المخزون حاليًا." %}</td>
                     </tr>
                 {% endif %}
             </tbody>
@@ -77,7 +78,7 @@
 </div>
 
 <footer class="text-center mt-5 py-3 bg-dark text-light">
-    <p>© 2025 جميع الحقوق محفوظة. إدارة المخزون.</p>
+    <p>{% translate "© 2025 جميع الحقوق محفوظة. إدارة المخزون." %}</p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

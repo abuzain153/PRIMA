@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="ar">
+{% load i18n %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تقرير الكميات المستلمة</title>
+    <title>{% translate "تقرير الكميات المستلمة" %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -41,10 +42,10 @@
 <body>
 
 <div class="container my-5">
-    <h1 class="text-center mb-4">تقرير الكميات المستلمة</h1>
+    <h1 class="text-center mb-4">{% translate "تقرير الكميات المستلمة" %}</h1>
 
     <div class="search-box">
-        <input type="text" id="searchInput" class="form-control" placeholder="ابحث عن منتج أو تاريخ...">
+        <input type="text" id="searchInput" class="form-control" placeholder="{% translate "ابحث عن منتج أو تاريخ..." %}">
     </div>
 
     <div class="table-container">
@@ -52,9 +53,9 @@
             <table class="table table-striped table-hover">
                 <thead class="table-primary">
                     <tr>
-                        <th>اسم المنتج</th>
-                        <th>الكمية</th>
-                        <th>التاريخ</th>
+                        <th>{% translate "اسم المنتج" %}</th>
+                        <th>{% translate "الكمية" %}</th>
+                        <th>{% translate "التاريخ" %}</th>
                     </tr>
                 </thead>
                 <tbody id="reportTable">
@@ -68,12 +69,12 @@
                 </tbody>
             </table>
         {% else %}
-            <p class="no-data">لا توجد حركات مستلمة حاليًا.</p>
+            <p class="no-data">{% translate "لا توجد حركات مستلمة حاليًا." %}</p>
         {% endif %}
     </div>
 
     <div class="text-center mt-4">
-        <a href="{% url 'received_report_excel' %}" class="btn btn-custom">تنزيل التقرير كملف Excel</a>
+        <a href="{% url 'received_report_excel' %}" class="btn btn-custom">{% translate "تنزيل التقرير كملف Excel" %}</a>
     </div>
 </div>
 

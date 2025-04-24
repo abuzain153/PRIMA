@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="ar">
+{% load i18n %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل حساب جديد</title>
+    <title>{% translate "تسجيل حساب جديد" %}</title>
 </head>
 <body>
-    <h1>تسجيل حساب جديد</h1>
+    <h1>{% translate "تسجيل حساب جديد" %}</h1>
     {% if messages %}
         <ul class="messages">
             {% for message in messages %}
@@ -17,8 +18,8 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">تسجيل</button>
+        <button type="submit">{% translate "تسجيل" %}</button>
     </form>
-    <a href="{% url 'login' %}">العودة إلى تسجيل الدخول</a>
+    <a href="{% url 'login' %}">{% translate "العودة إلى تسجيل الدخول" %}</a>
 </body>
 </html>

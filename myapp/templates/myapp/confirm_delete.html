@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block content %}
+    <h1>{% translate "تأكيد الحذف" %}</h1>
+    <p>{% translate "هل أنت متأكد أنك تريد حذف المنتج" %} "{{ object.product_name }}" {% translate "؟" %}</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">{% translate "تأكيد الحذف" %}</button>
+        <a href="{% url 'product_list' %}" class="btn btn-secondary">{% translate "إلغاء" %}</a>
+    </form>
+{% endblock %}

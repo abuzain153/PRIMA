@@ -1,10 +1,11 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ar">
+{% load i18n %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول - برنامج إدارة المخازن</title>
+    <title>{% translate "تسجيل الدخول - برنامج إدارة المخازن" %}</title>
     <style>
         /* خلفية الشاشة */
         body {
@@ -16,6 +17,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            direction: rtl; /* إضافة اتجاه النص من اليمين لليسار */
         }
 
         /* الحاوية الرئيسية */
@@ -26,6 +28,21 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* ظل أكثر بروزًا */
             text-align: center;
             width: 450px; /* عرض أكبر قليلاً */
+        }
+
+        /* نموذج اختيار اللغة */
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .language-selector select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            cursor: pointer;
         }
 
         /* العنوان */
@@ -110,23 +127,38 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>تسجيل الدخول</h1>
+        <div class="language-selector">
+            {% get_current_language as LANGUAGE_CODE %}
+            <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+                <input name="language" type="hidden" value="{{ LANGUAGE_CODE }}">
+                <select name="language" onchange="this.form.submit()">
+                    {% get_available_languages as LANGUAGES %}
+                    {% for lang_code, lang_name in LANGUAGES %}
+                        <option value="{{ lang_code }}"{% if lang_code == LANGUAGE_CODE %} selected{% endif %}>
+                            {{ lang_name|capfirst }} ({{ lang_code }})
+                        </option>
+                    {% endfor %}
+                </select>
+                <noscript><input type="submit" value="{% translate 'تغيير اللغة' %}"></noscript>
+            </form>
+        </div>
+        <h1>{% translate "تسجيل الدخول" %}</h1>
         <img src="https://cdn-icons-png.flaticon.com/512/2910/2910768.png" class="main-icon" alt="Warehouse Icon">
         <form method="post">
             {% csrf_token %}
             <div>
-                <label for="username">اسم المستخدم:</label>
-                <input type="text" id="username" name="username" placeholder="أدخل اسم المستخدم" required>
+                <label for="username">{% translate "اسم المستخدم:" %}</label>
+                <input type="text" id="username" name="username" placeholder="{% translate "أدخل اسم المستخدم" %}" required>
             </div>
             <div>
-                <label for="password">كلمة المرور:</label>
-                <input type="password" id="password" name="password" placeholder="أدخل كلمة المرور" required>
+                <label for="password">{% translate "كلمة المرور:" %}</label>
+                <input type="password" id="password" name="password" placeholder="{% translate "أدخل كلمة المرور" %}" required>
             </div>
-            <button type="submit">تسجيل الدخول</button>
+            <button type="submit">{% translate "تسجيل الدخول" %}</button>
         </form>
         <div class="links">
-            <a href="{% url 'forgot_password' %}">نسيت كلمة المرور؟</a>
-            <a href="{% url 'register' %}">تسجيل حساب جديد</a>
+            <a href="{% url 'forgot_password' %}">{% translate "نسيت كلمة المرور؟" %}</a>
+            <a href="{% url 'register' %}">{% translate "تسجيل حساب جديد" %}</a>
         </div>
     </div>
 </body>
