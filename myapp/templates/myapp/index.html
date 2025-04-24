@@ -53,7 +53,7 @@
             padding: 0;
             display: inline-block;
             direction: rtl;
-            animation: scroll 15s linear infinite;
+            /* animation: scroll 15s linear infinite; */ /* تم إيقاف حركة التمرير */
         }
 
         .navbar li {
@@ -141,14 +141,14 @@
         }
 
         /* حركة التمرير */
-        @keyframes scroll {
+        /* @keyframes scroll {
             0% { transform: translateX(0%); } /* يبدأ من بداية العناصر */
-            100% { transform: translateX(-200%); } /* يتحرك لليسار */
-        }
+            /* 100% { transform: translateX(-200%); } /* يتحرك لليسار */
+        /* } */
 
-        .navbar:hover ul {
+        /* .navbar:hover ul {
             animation-play-state: paused; /* إيقاف الحركة عند الـhover */
-        }
+        /* } */
 
         /* تعديلات لمحاذاة "عن الموقع" و "اتصل بنا" */
         #about .container,
