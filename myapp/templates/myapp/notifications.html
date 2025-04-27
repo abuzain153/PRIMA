@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% translate "الإشعارات" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">{% translate "الإشعارات" %}</h1>
+    {% if notifications %}
+    <ul class="list-group">
+        {% for notification in notifications %}
+        <li class="list-group-item {% if not notification.is_read %}list-group-item-primary{% endif %}">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ notification.get_notification_type_display }}</h5>
+                <small>{{ notification.created_at|timesince }} {% translate "مضت" %}</small>
+            </div>
+            <p class="mb-1">{{ notification.message }}</p>
+            <div class="mt-2">
+                <a href="#" class="btn btn-sm btn-outline-secondary mark-as-read" data-notification-id="{{ notification.id }}">{% translate "تحديد كمقروء" %}</a>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="text-center">{% translate "لا يوجد لديك إشعارات حالياً." %}</p>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const markAsReadButtons = document.querySelectorAll('.mark-as-read');
+        markAsReadButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                const notificationId = this.dataset.notificationId;
+                fetch(`/notifications/mark_as_read/${notificationId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        this.closest('.list-group-item').classList.remove('list-group-item-primary');
+                        this.remove(); // Optional: Remove the button after marking as read
+                    } else {
+                        console.error('Failed to mark as read');
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}
