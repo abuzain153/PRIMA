@@ -788,3 +788,9 @@ msgstr "Entered Quantity"
 msgid "الكمية الصادرة"
 msgstr "Quantity Dispatched"
 
+msgid "قراءة الباركود"
+msgstr "Read Barcode"
+
+msgid "إيقاف الكاميرا"
+msgstr "Stop Camera"
+
