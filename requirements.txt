@@ -21,3 +21,4 @@ waitress==3.0.2
 #matplotlib==3.10.1
 dj-static
 freetype-py
+django-widget-tweaks
