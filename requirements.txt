@@ -24,3 +24,4 @@ freetype-py
 django-widget-tweaks
 django-crispy-forms
 crispy-bootstrap5
+xlsxwriter
