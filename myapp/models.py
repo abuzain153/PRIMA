@@ -1,55 +1,106 @@
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+# from django.db.models.signals import post_save
+# from django.dispatch import receiver
 from django.contrib.auth.models import User  # استورد موديل User
 from django.contrib.auth.models import Group # استورد موديل Group
+from django.utils.translation import gettext_lazy as _ # استورد دالة الترجمة
+from decimal import Decimal
+
+class Warehouse(models.Model):
+    name = models.CharField(max_length=100, unique=True, verbose_name=_('اسم المخزن'))
+
+    def __str__(self):
+        return self.name
 
 class Product(models.Model):
-    product_name = models.CharField(max_length=255)
-    product_code = models.CharField(max_length=50, unique=True)
-    quantity = models.FloatField(default=0)
-    unit = models.CharField(max_length=50)
-    min_stock = models.FloatField()
-    team = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='products', null=True, blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products_added_by') # حقل المستخدم
+    product_name = models.CharField(max_length=255, verbose_name=_('اسم المنتج'))
+    product_code = models.CharField(max_length=50, unique=True, verbose_name=_('رمز المنتج'))
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), verbose_name=_('الكمية الكلية')) # استخدم DecimalField
+    unit = models.CharField(max_length=50, verbose_name=_('الوحدة'))
+    min_stock = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('الحد الأدنى للمخزون')) # استخدم DecimalField
+    team = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='products', null=True, blank=True, verbose_name=_('الفريق'))
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products_added_by', verbose_name=_('المستخدم')) # حقل المستخدم
+    warehouses = models.ManyToManyField(Warehouse, through='ProductWarehouse', related_name='products', verbose_name=_('المخازن')) # استخدام الموديل الوسيط
+    formatted_quantity_display = models.CharField(max_length=50, blank=True, null=True)
+    formatted_min_stock_display = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return self.product_name
 
+    def _format_decimal(self, value):
+        decimal_value = Decimal(str(value)).quantize(Decimal('0.00'))
+        if decimal_value == decimal_value.to_integral_value():
+            return str(decimal_value.to_integral_value())
+        else:
+            return format(decimal_value, '.2f')
+
     def save(self, *args, **kwargs):
+        self.formatted_quantity_display = self._format_decimal(self.quantity)
+        self.formatted_min_stock_display = self._format_decimal(self.min_stock) # نسق الحد الأدنى كمان
         super().save(*args, **kwargs)
+
+class ProductWarehouse(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=_('المنتج'))
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, verbose_name=_('المخزن'))
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    class Meta:
+        unique_together = ('product', 'warehouse') # عشان المنتج ميكونش متكرر في نفس المخزن
+
+    def __str__(self):
+        return f"{self.product.product_name} في {self.warehouse.name}: {self.quantity}"
 
 class Movement(models.Model):
     MOVEMENT_TYPES = (
         ('استلام', 'استلام'),
         ('سحب', 'سحب'),
     )
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    movement_type = models.CharField(max_length=50, choices=MOVEMENT_TYPES)
-    quantity = models.FloatField()
-    date = models.DateTimeField(auto_now_add=True)
-    quantity_after = models.FloatField(null=True, blank=True)
-    team = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='movements', null=True, blank=True) # حقل الفريق الجديد
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=_('المنتج'))
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_('المخزن')) # حقل المخزن
+    movement_type = models.CharField(max_length=50, choices=MOVEMENT_TYPES, verbose_name=_('نوع الحركة'))
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('الكمية')) # استخدم DecimalField هنا
+    date = models.DateTimeField(auto_now_add=True, verbose_name=_('التاريخ'))
+    quantity_after = models.FloatField(null=True, blank=True, verbose_name=_('الكمية بعد الحركة'))
+    stock_after_movement = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name=_('الكمية بالمخزون بعد الحركة')) # الحقل الجديد
+    team = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='movements', null=True, blank=True, verbose_name=_('الفريق')) # حقل الفريق الجديد
 
     def __str__(self):
-        return f"{self.product.product_name} - {self.movement_type} - {self.quantity}"
+        return f"{self.product.product_name} - {self.movement_type} - {self.quantity} في {self.warehouse}"
 
     def save(self, *args, **kwargs):
-        if self.movement_type == "سحب" and self.quantity > self.product.quantity:
-            raise ValueError("الكمية المسحوبة أكبر من المخزون المتوفر.")
+        if self.movement_type == "سحب" and self.quantity > (self.product.productwarehouse_set.filter(warehouse=self.warehouse).first().quantity if self.warehouse else 0):
+            raise ValueError("الكمية المسحوبة أكبر من المخزون المتوفر في هذا المخزن.")
         super().save(*args, **kwargs)
-        self.quantity_after = self.product.quantity
-        super().save(update_fields=['quantity_after'])
+        # مش هنحسب stock_after_movement هنا، هنحسبها في الـ Views
 
-# تم تعطيل الإشارة المسؤولة عن تحديث كمية المنتج تلقائيًا
-# @receiver(post_save, sender=Movement)
-# def update_product_quantity(sender, instance, created, **kwargs):
-#     """
-#     تحديث كمية المنتج بعد حفظ الحركة.
-#     """
-#     product = instance.product
-#     if instance.movement_type == 'استلام':
-#         product.quantity += instance.quantity
-#     elif instance.movement_type == 'سحب':
-#         product.quantity -= instance.quantity
-#     product.save()
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('المستخدم'))
+    notification_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('low_stock', 'Low Stock'),
+            ('new_product', 'New Product'),
+            ('quantity_added', 'Quantity Added'),
+            ('quantity_withdrawn', 'Quantity Withdrawn'),
+            # ... أنواع إشعارات تانية ممكن تضيفها
+        ],
+        verbose_name=_('نوع الإشعار')
+    )
+    message = models.TextField(verbose_name=_('الرسالة'))
+    is_read = models.BooleanField(default=False, verbose_name=_('مقروء'))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('تاريخ الإنشاء'))
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_('المنتج')) # ربط اختياري بالمنتج
+
+    def __str__(self):
+        return f"إشعار لـ {self.user.username}: {self.get_notification_type_display()}"
+
+    def get_notification_type_display(self):
+        return dict(self.NOTIFICATION_TYPE_CHOICES).get(self.notification_type, self.notification_type)
+
+    NOTIFICATION_TYPE_CHOICES = [
+        ('low_stock', 'Low Stock'),
+        ('new_product', 'New Product'),
+        ('quantity_added', 'Quantity Added'),
+        ('quantity_withdrawn', 'Quantity Withdrawn'),
+        # ... نفس أنواع الإشعارات اللي في حقل choices
+    ]

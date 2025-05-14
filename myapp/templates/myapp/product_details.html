@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% translate "تفاصيل المنتج" %}: {{ product.product_name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>{% translate "تفاصيل المنتج" %}: {{ product.product_name }}</h1>
+    <p><strong>{% translate "رمز المنتج" %}:</strong> {{ product.product_code }}</p>
+    <p><strong>{% translate "الوحدة" %}:</strong> {{ product.unit }}</p>
+    <p><strong>{% translate "الحد الأدنى للمخزون" %}:</strong> {{ product.min_stock }}</p>
+
+    <h2>{% translate "المخازن والكميات" %}</h2>
+    {% if product_warehouses %}
+        <ul>
+            {% for pw in product_warehouses %}
+                <li><strong>{{ pw.warehouse.name }}:</strong> {{ pw.quantity }} {{ product.unit }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>{% translate "هذا المنتج غير متوفر في أي مخزن حاليًا." %}</p>
+    {% endif %}
+
+    <a href="{% url 'product_list' %}" class="btn btn-secondary mt-3">{% translate "الرجوع لقائمة المنتجات" %}</a>
+</div>
+{% endblock %}

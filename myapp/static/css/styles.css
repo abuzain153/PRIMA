@@ -42,15 +42,16 @@ footer {
 .navbar-fixed-product-list {
     background-color: #333; /* نفس لون الخلفية */
     color: #fff;
-    padding: 1rem; /* نفس الـ padding */
+    padding: 0.2rem 0.5rem; /* تقليل الـ padding الرأسي والأفقي */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05); /* تقليل حجم الظل أكتر */
     display: flex;
     justify-content: flex-end;
+    height: auto; /* عشان ياخد حجم المحتوى */
 }
 
 .navbar-fixed-product-list ul {
@@ -64,7 +65,7 @@ footer {
 
 .navbar-fixed-product-list li {
     display: inline-block;
-    margin-left: 1rem; /* مسافة بين العناصر */
+    margin-left: 0.2rem; /* تقليل المسافة بين العناصر أكتر */
 }
 
 .navbar-fixed-product-list li:first-child {
@@ -77,7 +78,8 @@ footer {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: inherit; /* عشان ياخد حجم الخط من الأب */
+    font-size: 0.7rem; /* تصغير حجم الخط أكتر وأكتر */
+    padding: 0.1rem 0.2rem; /* تقليل الـ padding الداخلي أكتر وأكتر */
 }
 
 .navbar-fixed-product-list a:hover, .navbar-fixed-product-list button:hover {
@@ -93,16 +95,18 @@ footer {
     display: none;
     position: absolute;
     background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    min-width: 80px; /* تقليل العرض الأدنى للقائمة المنسدلة أكتر */
+    box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.1); /* تقليل حجم الظل أكتر وأكتر */
     z-index: 1;
     right: 0; /* عشان القائمة تظهر من اليمين */
     text-align: right; /* محاذاة النص لليمين */
+    font-size: 0.7rem; /* تصغير حجم الخط في القائمة المنسدلة أكتر وأكتر */
+    padding: 0.1rem 0; /* تقليل الـ padding الرأسي في القائمة المنسدلة أكتر وأكتر */
 }
 
 .navbar-fixed-product-list .dropdown-content a {
     color: black;
-    padding: 12px 16px;
+    padding: 0.2rem 0.4rem; /* تقليل الـ padding في روابط القائمة المنسدلة أكتر وأكتر */
     text-decoration: none;
     display: block;
 }
@@ -115,4 +119,16 @@ footer {
 
 .navbar-fixed-product-list .dropdown-button {
     padding: 0;
+}
+
+body {
+    padding-top: 25px; /* تعديل الـ padding-top لجسم الصفحة أكتر وأكتر */
+}
+
+/* --- التعديل اللي طلبته عشان نصغر مساحة رابط "ראשי" --- */
+.navbar-fixed-product-list .nav-link {
+    padding-top: 0.3rem !important;
+    padding-bottom: 0.3rem !important;
+    font-size: 0.9rem !important;
+    line-height: 1 !important;
 }

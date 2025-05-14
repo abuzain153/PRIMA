@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% translate "سحب كمية من المخازن" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container mt-5 p-4 border rounded">
+        <h1 class="text-center">{% translate "سحب كمية من المخازن" %}</h1>
+        <p class="text-center text-muted">
+            {% translate "الرجاء تحديد الكمية المراد سحبها من كل مخزن للمنتج:" %} <strong>{{ product.product_name }}</strong> ({{ product.product_code }}).
+            {% translate "إجمالي الكمية المطلوبة:" %} <strong>{{ quantity_to_withdraw }}</strong> {{ product.unit }}.
+        </p>
+
+        {% if messages %}
+        <div class="alert alert-dismissible fade show mt-3">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'withdraw_quantity' %}" class="mt-4">
+            {% csrf_token %}
+            <input type="hidden" name="withdraw_from_warehouses" value="1">
+            <input type="hidden" name="{{ withdraw_form.product_id.name }}" value="{{ withdraw_form.product_id.value }}">
+            <input type="hidden" name="{{ withdraw_form.total_quantity_to_withdraw.name }}" value="{{ withdraw_form.total_quantity_to_withdraw.value }}">
+
+            {% if withdraw_form.errors %}
+                <div class="alert alert-danger">
+                    {% for error in withdraw_form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                    {% for field in withdraw_form %}
+                        {% if field.errors %}
+                            <p>{{ field.label }}: {{ field.errors }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {{ withdraw_form|crispy }}
+
+            <button type="submit" class="btn btn-danger w-100 mt-3">{% translate "تأكيد السحب" %}</button>
+            <a href="{% url 'withdraw_quantity' %}" class="btn btn-secondary w-100 mt-2">{% translate "إلغاء" %}</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

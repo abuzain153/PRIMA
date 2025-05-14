@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% translate "اختر المخازن" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center mt-4">{% translate "إضافة منتج جديد - اختر المخازن" %}</h1>
+
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">{% translate "اختر المخازن التي سيتم تخزين المنتج فيها:" %}</label>
+            {{ form.warehouses }}
+            {% if form.errors.warehouses %}
+                <div class="text-danger">{{ form.errors.warehouses }}</div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">{% translate "التالي" %}</button>
+    </form>
+</div>
+{% endblock %}

@@ -10,19 +10,16 @@
 <body>
 
 <div class="container mt-5">
-    <h1 class="text-center mb-4">{% translate "تعديل منتج" %}</h1>
+    <h1 class="text-center mb-4">{% translate "تعديل منتج" %}: {{ form.instance.product_name }}</h1>
 
-    {% if success %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ success }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endif %}
-
-    {% if error %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ error }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    {% if messages %}
+        <div class="alert mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
         </div>
     {% endif %}
 
@@ -45,32 +42,34 @@
                 </ul>
             </div>
         {% endif %}
-        <div class="mb-3">
-            <label for="product_name" class="form-label">{% translate "اسم المنتج:" %}</label>
-            <input type="text" id="product_name" name="product_name" value="{{ form.product_name.value|default:product.product_name }}" class="form-control" required>
-        </div>
 
-        <div class="mb-3">
-            <label for="product_code" class="form-label">{% translate "رمز المنتج:" %}</label>
-            <input type="text" id="product_code" name="product_code" value="{{ form.product_code.value|default:product.product_code }}" class="form-control" required>
-        </div>
+        {% for field in form.visible_fields %}
+            {% if not field.name|slice:':14' == 'warehouse_qty_' %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
 
-        <div class="mb-3">
-            <label for="quantity" class="form-label">{% translate "الكمية:" %}</label>
-            <input type="number" id="quantity" name="quantity" value="{{ form.quantity.value|default:product.quantity }}" class="form-control" required step="any">
-        </div>
+        <h2 class="mt-4">{% translate "توزيع الكميات على المخازن" %}</h2>
+        {% for field in form.visible_fields %}
+            {% if field.name|slice:':14' == 'warehouse_qty_' %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
 
-        <div class="mb-3">
-            <label for="unit" class="form-label">{% translate "الوحدة:" %}</label>
-            <input type="text" id="unit" name="unit" value="{{ form.unit.value|default:product.unit }}" class="form-control" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="min_stock" class="form-label">{% translate "الحد الأدنى للمخزون:" %}</label>
-            <input type="number" id="min_stock" name="min_stock" value="{{ form.min_stock.value|default:product.min_stock }}" class="form-control" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">{% translate "تعديل" %}</button>
+        <button type="submit" class="btn btn-primary w-100">{% translate "حفظ التعديلات" %}</button>
+        <a href="{% url 'product_list' %}" class="btn btn-secondary mt-3 w-100">{% translate "الرجوع لقائمة المنتجات" %}</a>
     </form>
 
     <div class="text-danger mt-3" id="error-message" style="display: none;"></div>

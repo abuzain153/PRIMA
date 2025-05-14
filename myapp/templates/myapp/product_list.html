@@ -66,7 +66,7 @@
 
     <div class="table-container">
         {% if products %}
-<p>{% translate "عدد المنتجات:" %} {{ products|length }}</p>
+            <p>{% translate "عدد المنتجات:" %} {{ products|length }}</p>
             <table class="table table-striped table-hover">
                 <thead class="table-primary">
                     <tr>
@@ -75,22 +75,33 @@
                         <th>{% translate "الكمية" %}</th>
                         <th>{% translate "الوحدة" %}</th>
                         <th>{% translate "الحد الأدنى" %}</th>
+                        <th>{% translate "المخازن" %}</th>
                         <th>{% translate "الإجراءات" %}</th>
                     </tr>
                 </thead>
                 <tbody id="productTable">
                     {% for product in products %}
-                        <tr>
-                            <td>{{ product.product_name }}</td>
-                            <td>{{ product.product_code }}</td>
-                            <td>{{ product.quantity }}</td>
-                            <td>{{ product.unit }}</td>
-                            <td>{{ product.min_stock }}</td>
-                            <td>
-                                <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-primary">{% translate "تعديل" %}</a>
-                                <a href="{% url 'delete_product' product.id %}" class="btn btn-sm btn-danger" onclick="return confirm('{% translate "هل أنت متأكد من الحذف؟" %}');">{% translate "حذف" %}</a>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>{{ product.product_name }}</td>
+                        <td>{{ product.product_code }}</td>
+                        <td>{{ product.formatted_quantity_display }}</td>
+                        <td>{{ product.unit }}</td>
+                        <td>{{ product.formatted_min_stock_display }}</td>
+                        <td>
+                            {% for product_warehouse in product.productwarehouse_set.all %}
+                                <span class="badge bg-secondary">{{ product_warehouse.warehouse.name }}</span>{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                <span class="text-muted">{% translate "غير موجود في أي مخزن" %}</span>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-primary">{% translate "تعديل" %}</a>
+                            <a href="{% url 'delete_product' product.id %}" class="btn btn-sm btn-danger" onclick="return confirm('{% translate "هل أنت متأكد من الحذف؟" %}');">{% translate "حذف" %}</a>
+                            <a href="{% url 'view_product_details' product.id %}" class="btn btn-sm btn-info">{% translate "عرض الكميات بالمخازن" %}</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7">{% translate "لا يوجد منتجات في المخزون حاليًا." %}</td></tr>
                     {% endfor %}
                 </tbody>
             </table>

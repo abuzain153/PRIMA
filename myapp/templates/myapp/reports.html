@@ -1,78 +1,182 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}{% translate "سجل الحركات" %}{% endblock %}
+{% block title %}{% translate "سجل الحركات والتقارير" %}{% endblock %}
 
 {% block content %}
 <div class="container mt-3">
-    <h1 class="text-center mb-4">{% translate "سجل الحركات" %}</h1>
+    <h1 class="text-center mb-4">{% translate "سجل الحركات والتقارير" %}</h1>
 
     <div class="d-flex justify-content-center mb-4">
         <a href="{% url 'received_report' %}" class="btn btn-success me-2">{% translate "تنزيل تقرير الاستلام (Excel)" %}</a>
         <a href="{% url 'withdrawn_report' %}" class="btn btn-danger">{% translate "تنزيل تقرير السحب (Excel)" %}</a>
     </div>
 
-    <div class="search-box mb-3"> {# هنا غيرت mb-0 إلى mb-3 لزيادة المسافة #}
-        <input type="text" id="searchInput" class="form-control" placeholder="{% translate "ابحث عن منتج..." %}">
-    </div>
+    <h2 class="text-center mb-4">{% translate "استعلام عن الحركات" %}</h2>
+    <form method="get" action="{% url 'search_movements' %}" class="mb-4">
+        <div class="mb-3">
+            <label for="product_query" class="form-label">{% translate "ابحث عن المنتج (اسم أو رمز)" %}</label>
+            <input type="text" class="form-control" id="product_query_input" name="product_query" placeholder="{% translate 'ادخل اسم المنتج أو رمزه' %}">
+            <select class="form-control" id="product_query_dropdown" style="display:none;">
+                <option value="">{% translate "اختر المنتج" %}</option>
+            </select>
+            <input type="hidden" id="product_query" name="product_query">
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="start_date" class="form-label">{% translate "تاريخ البداية" %}</label>
+                <input type="date" class="form-control" id="start_date" name="start_date">
+            </div>
+            <div class="col-md-6">
+                <label for="end_date" class="form-label">{% translate "تاريخ النهاية" %}</label>
+                <input type="date" class="form-control" id="end_date" name="end_date">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">{% translate "بحث" %}</button>
+    </form>
 
-    {% if movements %}
-    <div class="table-responsive">
-        <table id="movementsTable" class="table table-bordered table-striped">
-            <thead class="table-primary">
-                <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-center">{% translate "اسم المنتج" %}</th>
-                    <th class="text-center">{% translate "نوع الحركة" %}</th>
-                    <th class="text-center">{% translate "الكمية" %}</th>
-                    <th class="text-center">{% translate "الوحدة" %}</th>
-                    <th class="text-center">{% translate "التاريخ" %}</th>
-                    <th class="text-center">{% translate "الفريق" %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for movement in movements %}
-                <tr>
-                    <td class="text-center">{{ forloop.counter }}</td>
-                    <td class="text-center">{{ movement.product.product_name }}</td>
-                    <td class="text-center">{% translate movement.movement_type %}</td>
-                    <td class="text-center">{{ movement.quantity }}</td>
-                    <td class="text-center">{{ movement.product.unit }}</td>
-                    <td class="text-center">{{ movement.date }}</td>
-                    <td class="text-center">{% translate movement.team.name %}</td>
-                </tr>
-                {% empty %}
-                    <tr><td colspan="7" class="text-center">{% translate "لا توجد حركات لعرضها في هذا التقرير." %}</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    {% if search_results %}
+        <h3 class="text-center mb-3">{% translate "نتائج البحث" %}</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-primary">
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">{% translate "اسم المنتج" %}</th>
+                        <th class="text-center">{% translate "نوع الحركة" %}</th>
+                        <th class="text-center">{% translate "الكمية" %}</th>
+                        <th class="text-center">{% translate "الوحدة" %}</th>
+                        <th class="text-center">{% translate "التاريخ" %}</th>
+                        <th class="text-center">{% translate "المخزن" %}</th>
+                        <th class="text-center">{% translate "الرصيد الحالي بالمخزن" %}</th>
+                        <th class="text-center">{% translate "الرصيد الكلي بكل المخازن" %}</th>
+                        <th class="text-center">{% translate "الفريق" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in search_results %}
+                        <tr>
+                            <td class="text-center">{{ forloop.counter }}</td>
+                            <td class="text-center">{{ item.movement.product.product_name }}</td>
+                            <td class="text-center">{% translate item.movement.movement_type %}</td>
+                            <td class="text-center">{{ item.movement.quantity }}</td>
+                            <td class="text-center">{{ item.movement.product.unit }}</td>
+                            <td class="text-center">{{ item.movement.date }}</td>
+                            <td class="text-center">{{ item.movement.warehouse.name }}</td>
+                            <td class="text-center">{{ item.current_stock }}</td>
+                            <td class="text-center">{{ item.total_stock_all_warehouses }}</td>
+                            <td class="text-center">{% translate item.movement.team.name %}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="10" class="text-center">{% translate "لا توجد نتائج للبحث." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href="{% url 'search_movements_excel' %}?{% for key, value in request.GET.items %}{{ key }}={{ value }}&{% endfor %}" class="btn btn-success mt-3">{% translate "تنزيل نتائج البحث (Excel)" %}</a>
+    {% endif %}
+
+    <hr class="mt-5">
+
+    {% if movements_with_stock_info %}
+        <h2 class="text-center mb-4">{% translate "سجل الحركات الأخير" %}</h2>
+        <p class="text-center text-info fw-bold">*** Movements Exist! ***</p>
+        <p class="text-center text-info fw-bold">Number of movements: {{ movements_with_stock_info|length }}</p>
+        <div class="table-responsive">
+            <table id="movementsTable" class="table table-bordered table-striped">
+                <thead class="table-primary">
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">{% translate "اسم المنتج" %}</th>
+                        <th class="text-center">{% translate "نوع الحركة" %}</th>
+                        <th class="text-center">{% translate "الكمية" %}</th>
+                        <th class="text-center">{% translate "الوحدة" %}</th>
+                        <th class="text-center">{% translate "التاريخ" %}</th>
+                        <th class="text-center">{% translate "المخزن" %}</th>
+                        <th class="text-center">{% translate "الرصيد الحالي بالمخزن" %}</th>
+                        <th class="text-center">{% translate "الرصيد الكلي بكل المخازن" %}</th>
+                        <th class="text-center">{% translate "الفريق" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in movements_with_stock_info %}
+                        <tr>
+                            <td class="text-center">{{ forloop.counter }}</td>
+                            <td class="text-center">{{ item.movement.product.product_name }}</td>
+                            <td class="text-center">{% translate item.movement.movement_type %}</td>
+                            <td class="text-center">{{ item.movement.quantity }}</td>
+                            <td class="text-center">{{ item.movement.product.unit }}</td>
+                            <td class="text-center">{{ item.movement.date }}</td>
+                            <td class="text-center">{{ item.movement.warehouse.name }}</td>
+                            <td class="text-center">{{ item.current_stock }}</td>
+                            <td class="text-center">{{ item.total_stock_all_warehouses }}</td>
+                            <td class="text-center">{% translate item.movement.team.name %}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="10" class="text-center">{% translate "لا توجد حركات لعرضها في هذا التقرير." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
         <p class="text-center text-warning fw-bold">{% translate "لا توجد حركات لعرضها في هذا التقرير." %}</p>
     {% endif %}
 </div>
 
 <script>
-    const searchInput = document.getElementById('searchInput');
-    const table = document.getElementById('movementsTable');
-    const rows = table ? table.getElementsByTagName('tr') : [];
+    const productQueryInput = document.getElementById('product_query_input');
+    const productQueryDropdown = document.getElementById('product_query_dropdown');
+    const productQueryHidden = document.getElementById('product_query');
+    let productsData = [];
 
-    searchInput.addEventListener('input', function() {
-        const filter = searchInput.value.toLowerCase();
+    fetch('/get_products_json/') // مسار لجلب بيانات المنتجات كـ JSON
+        .then(response => response.json())
+        .then(data => {
+            productsData = data.results || data; // استخدام data.results إذا كان موجودًا
+            populateProductDropdown(productsData);
+        });
 
-        for (let i = 1; i < rows.length; i++) { // ابدأ من 1 لتجنب ترويسة الجدول
-            const cells = rows[i].getElementsByTagName('td');
-            let isMatch = false;
+    function populateProductDropdown(products) {
+        productQueryDropdown.innerHTML = '<option value="">{% translate "اختر المنتج" %}</option>';
+        products.forEach(product => {
+            const option = document.createElement('option');
+            option.value = product.id;
+            option.textContent = `${product.product_name} (${product.product_code})`;
+            productQueryDropdown.appendChild(option);
+        });
+    }
 
-            for (let j = 0; j < cells.length; j++) {
-                if (cells[j].textContent.toLowerCase().includes(filter)) {
-                    isMatch = true;
-                    break;
-                }
-            }
+    productQueryInput.addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const filteredProducts = productsData.filter(product =>
+            product.product_name.toLowerCase().includes(filter) || product.product_code.toLowerCase().includes(filter)
+        );
+        populateProductDropdown(filteredProducts);
+        productQueryDropdown.size = filteredProducts.length > 10 ? 10 : filteredProducts.length;
+        productQueryDropdown.style.display = filter ? 'block' : 'none';
+    });
 
-            rows[i].style.display = isMatch ? '' : 'none';
+    productQueryDropdown.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.value) {
+            productQueryInput.value = selectedOption.textContent; // عرض الاسم والرمز في حقل الإدخال
+            productQueryHidden.value = selectedOption.value; // تخزين الـ ID الفعلي للمنتج
+        } else {
+            productQueryInput.value = '';
+            productQueryHidden.value = '';
         }
+        this.style.display = 'none';
+    });
+
+    productQueryInput.addEventListener('blur', function() {
+        setTimeout(() => {
+            productQueryDropdown.style.display = 'none';
+        }, 200);
+    });
+
+    // إخفاء القائمة عند التركيز على حقل الإدخال
+    productQueryInput.addEventListener('focus', function() {
+        productQueryDropdown.style.display = this.value ? 'block' : 'none';
     });
 </script>
 

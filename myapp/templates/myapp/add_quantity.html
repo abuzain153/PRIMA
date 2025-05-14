@@ -5,42 +5,48 @@
 
 {% block content %}
 <style>
-    .mb-3 { /* أو أي كلاس بيغلف label و input-group */
+    .mb-3 {
         position: relative;
     }
+
     .input-group {
-        display: flex; /* عشان نرتب العناصر جنب بعض */
-        align-items: center; /* عشان يكونوا متوازيين عمودياً */
+        display: flex;
+        align-items: center;
     }
+
     #product-suggestions {
         z-index: 2000 !important;
         position: absolute !important;
-        top: calc(100% + 5px); /* ابدأ بعد 5 بكسل من نهاية العنصر الأب */
-        left: 0; /* تبدأ من بداية حقل الإدخال */
+        top: calc(100% + 5px);
+        left: 0;
         width: 300px !important;
         background-color: white !important;
         text-align: right !important;
         border: 1px solid #ccc !important;
         max-height: 200px !important;
         overflow-y: auto !important;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* إضافة ظل بسيط للقائمة */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
+
     .list-group-item {
-        width: 100%; /* تأكد إن العناصر تاخد كامل عرض القائمة */
+        width: 100%;
     }
 </style>
+
 <div class="container">
     <div class="form-container mt-5 p-4 border rounded">
         <h1 class="text-center">{% translate "إضافة كمية إلى منتج" %}</h1>
-        <p class="text-center text-muted">{% translate "حدد المنتج ثم أدخل الكمية المراد إضافتها." %}</p>
+        <p class="text-center text-muted">
+            {% translate "حدد المنتج ثم أدخل الكمية المراد إضافتها." %}
+        </p>
 
         {% if messages %}
         <div class="alert alert-dismissible fade show mt-3">
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
             {% endfor %}
         </div>
         {% endif %}
@@ -55,14 +61,14 @@
                         <i class="bi bi-caret-down-fill"></i>
                     </button>
                     <button class="btn btn-outline-info" type="button" id="start-barcode-scanner">
-                        <i class="bi bi-upc-scan"></i> {% translate "قراءة الباركود" %}
+                        <i class="bi bi-upc-scan"></i> {% trans "قراءة الباركود" %}
                     </button>
                     <button class="btn btn-outline-danger" type="button" id="stop-barcode-scanner" style="display: none;">
-                        <i class="bi bi-stop-circle-fill"></i> {% translate "إيقاف الكاميرا" %}
+                        <i class="bi bi-stop-circle-fill"></i> {% trans "إيقاف الكاميرا" %}
                     </button>
                 </div>
                 <div class="list-group mt-2" id="product-suggestions" style="display: none;">
-                    </div>
+                </div>
                 <input type="hidden" name="product_id" id="selected-product-id">
             </div>
 
@@ -90,8 +96,10 @@
                 <input type="number" name="quantity_to_add" id="quantity_to_add" class="form-control" required min="0" step="any">
             </div>
 
-            <button type="submit" class="btn btn-primary w-100">{% translate "إضافة" %}</button>
-            <button type="button" onclick="window.history.back();" class="btn btn-secondary w-100 mt-2">{% translate "رجوع" %}</button>
+            <button type="submit" name="select_product" class="btn btn-primary w-100">{% translate "التالي" %}</button>
+            <button type="button" onclick="window.history.back();" class="btn btn-secondary w-100 mt-2">
+                {% translate "رجوع" %}
+            </button>
         </form>
     </div>
 </div>
@@ -116,6 +124,7 @@
     function toggleProductSuggestions(show) {
         isListVisible = show;
         productSuggestionsList.style.display = isListVisible ? 'block' : 'none';
+        // **تعديل:** نتأكد إن ماسح الباركود مخفي لما نظهر الاقتراحات ونتحقق من وجود Quagga
         if (isListVisible) {
             barcodeScannerContainer.style.display = 'none';
             stopBarcodeScannerButton.style.display = 'none';
@@ -127,6 +136,7 @@
                     console.error("Error stopping Quagga:", error);
                 }
             }
+            // إيقاف تدفق الفيديو عند إخفاء قائمة الاقتراحات
             if (barcodeScannerVideo.srcObject) {
                 const stream = barcodeScannerVideo.srcObject;
                 const tracks = stream.getTracks();
@@ -135,7 +145,7 @@
             }
         }
         if (isListVisible && productSuggestionsList.innerHTML === '') {
-            fetchProducts('');
+            fetchProducts(''); // Load all products initially when list is opened
         }
     }
 
@@ -151,6 +161,7 @@
         } else {
             toggleProductSuggestions(false);
         }
+        // **تعديل إضافي هنا عشان نتأكد إن Quagga متوقفة لما بنبدأ نكتب في البحث ونتحقق من وجود Quagga**
         if (typeof Quagga !== 'undefined' && Quagga && Quagga.inputStream) {
             try {
                 Quagga.stop();
@@ -160,6 +171,7 @@
             scannerActive = false;
             barcodeScannerContainer.style.display = 'none';
             stopBarcodeScannerButton.style.display = 'none';
+            // إيقاف تدفق الفيديو عند بدء الكتابة في البحث
             if (barcodeScannerVideo.srcObject) {
                 const stream = barcodeScannerVideo.srcObject;
                 const tracks = stream.getTracks();

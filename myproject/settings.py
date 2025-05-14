@@ -5,17 +5,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-9_$az03iqojjq#l_f7=^penpwyz6=qipvz$2m%mou$1yq%wao3'
 DEBUG = True
-ALLOWED_HOSTS = ['prima-dd2g.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['prima-dd2g.onrender.com', 'localhost', '127.0.0.1','192.168.10.166']
 
 INSTALLED_APPS = [
-    'myapp',
+    'myapp' ,
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'widget_tweaks',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -41,6 +49,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'myapp.context_processors.user_notifications',  # <--- تم الإضافة هنا
             ],
         },
     },

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% translate "نظام إدارة المنتجات" %}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         /* إعدادات عامة */
         * {
@@ -74,6 +75,8 @@
             border: none;
             cursor: pointer;
             padding: 0;
+            display: flex; /* عشان نخلي العناصر جواه متوازنة رأسيًا */
+            align-items: center; /* محاذاة رأسية */
         }
 
         .navbar a:hover, .navbar .dropdown-button:hover {
@@ -163,7 +166,9 @@
     <nav class="navbar">
         <ul class="nav">
             <li class="dropdown">
-                <button class="dropdown-button">{% translate "إدارة المخزون" %} 📦</button>
+                <button class="dropdown-button">
+                    <span style="display: flex; align-items: center;">📦 {% translate "إدارة المخزون" %}</span>
+                </button>
                 <div class="dropdown-content">
                     <a href="{% url 'add_product' %}">{% translate "إضافة منتج جديد" %}</a>
                     <a href="{% url 'product_list' %}">{% translate "قائمة المنتجات" %}</a>
@@ -175,6 +180,21 @@
             <li><a href="{% url 'home' %}">{% translate "الرئيسية" %}</a></li>
             <li><a href="#about">{% translate "عن الموقع" %}</a></li>
             <li><a href="#contact">{% translate "اتصل بنا" %}</a></li>
+            <li>
+                <a href="{% url 'notifications_list' %}">
+                    <div style="display: flex; align-items: center;">
+                        <div style="position: relative; margin-left: 5px;">
+                            <i class="fas fa-bell" style="color: gold; font-size: 24px; vertical-align: middle;"></i>
+                            {% if user.is_authenticated and unread_notifications_count > 0 %}
+                                <span style="position: absolute; top: -8px; left: -8px; background-color: red; color: white; border-radius: 50%; padding: 2px 5px; font-size: 0.7em;">
+                                    {{ unread_notifications_count }}{% if unread_notifications_count > 9 %}+{% endif %}
+                                </span>
+                            {% endif %}
+                        </div>
+                        <span style="margin-right: 5px;">{% translate "الإشعارات" %}</span>
+                    </div>
+                </a>
+            </li>
             <li>
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}

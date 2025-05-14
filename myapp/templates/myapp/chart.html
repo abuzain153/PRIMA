@@ -40,7 +40,7 @@
             margin: 0 auto;
             width: 100%;
             height: auto;
-            margin-bottom: 20px; /* مساحة بين الرسم البياني والجدول */
+            margin-bottom: 20px; /* مساحة بين الرسوم البيانية والجداول */
         }
 
         h2.table-title {
@@ -59,27 +59,47 @@
             {{ error }}
         </div>
     {% else %}
-        <canvas id="withdrawalChart"></canvas>
-
-        <h2 class="text-center mb-3">{% translate "المنتجات الأكثر سحبًا" %}</h2>
+        <h2>{% translate "المواد الخام الأكثر سحبًا" %} ({% for unit in raw_material_units %}{{ unit }}{% if not forloop.last %}, {% endif %}{% endfor %})</h2>
+        <canvas id="rawMaterialChart"></canvas>
         <div class="table-responsive">
             <table class="table table-bordered table-striped">
                 <thead class="table-primary">
                     <tr>
                         <th class="text-center">{% translate "اسم المنتج" %}</th>
                         <th class="text-center">{% translate "كمية السحب الإجمالية" %}</th>
-                        <th class="text-center">{% translate "الوحدة" %}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in withdrawn_data %}
+                    {% for item in raw_material_data %}
                     <tr>
                         <td class="text-center">{{ item.product__product_name }}</td>
                         <td class="text-center">{{ item.total_quantity }}</td>
-                        <td class="text-center">{{ item.product__unit }}</td>
                     </tr>
                     {% empty %}
-                        <tr><td colspan="3" class="text-center">{% translate "لا توجد بيانات لعرض المنتجات المسحوبة." %}</td></tr>
+                        <tr><td colspan="2" class="text-center">{% translate "لا توجد بيانات لعرض المواد الخام المسحوبة." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h2>{% translate "الأوراق / التغليف الأكثر سحبًا" %} ({% for unit in packaging_units %}{{ unit }}{% if not forloop.last %}, {% endif %}{% endfor %})</h2>
+        <canvas id="packagingChart"></canvas>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-primary">
+                    <tr>
+                        <th class="text-center">{% translate "اسم المنتج" %}</th>
+                        <th class="text-center">{% translate "كمية السحب الإجمالية" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in packaging_data %}
+                    <tr>
+                        <td class="text-center">{{ item.product__product_name }}</td>
+                        <td class="text-center">{{ item.total_quantity }}</td>
+                    </tr>
+                    {% empty %}
+                        <tr><td colspan="2" class="text-center">{% translate "لا توجد بيانات لعرض الأوراق / التغليف المسحوبة." %}</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -88,23 +108,69 @@
 </div>
 
 <script>
-    {% if withdrawn_data %}
-        const withdrawnData = [
-            {% for data in withdrawn_data %}
+    {% if raw_material_data %}
+        const rawMaterialChartData = [
+            {% for data in raw_material_data %}
                 { label: '{{ data.product__product_name }}', data: '{{ data.total_quantity }}' },
             {% endfor %}
         ];
 
-        const ctx = document.getElementById('withdrawalChart').getContext('2d');
-        new Chart(ctx, {
+        const rawMaterialCtx = document.getElementById('rawMaterialChart').getContext('2d');
+        new Chart(rawMaterialCtx, {
             type: 'bar',
             data: {
-                labels: withdrawnData.map(item => item.label),
+                labels: rawMaterialChartData.map(item => item.label),
                 datasets: [{
                     label: '{% translate "الكمية المسحوبة" %}',
-                    data: withdrawnData.map(item => parseInt(item.data)),
-                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    data: rawMaterialChartData.map(item => parseInt(item.data)),
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '{% translate "الكمية" %}'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: '{% translate "المنتج" %}'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        rtl: true, // عشان النص العربي في التولتيب
+                    },
+                },
+            }
+        });
+    {% endif %}
+
+    {% if packaging_data %}
+        const packagingChartData = [
+            {% for data in packaging_data %}
+                { label: '{{ data.product__product_name }}', data: '{{ data.total_quantity }}' },
+            {% endfor %}
+        ];
+
+        const packagingCtx = document.getElementById('packagingChart').getContext('2d');
+        new Chart(packagingCtx, {
+            type: 'bar',
+            data: {
+                labels: packagingChartData.map(item => item.label),
+                datasets: [{
+                    label: '{% translate "الكمية المسحوبة" %}',
+                    data: packagingChartData.map(item => parseInt(item.data)),
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
                 }]
             },

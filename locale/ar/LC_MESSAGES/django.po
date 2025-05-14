@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-23 14:41+0300\n"
+"POT-Creation-Date: 2025-05-14 09:29+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,198 +19,349 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: .\myapp\forms.py:14 .\myapp\templates\myapp\chart.html:69
+#: .\myapp\forms.py:15
+#: .\myapp\templates\myapp\add_product_warehouse_selection.html:4
+#, fuzzy
+#| msgid "الكمية المدخلة"
+msgid "اختر المخازن"
+msgstr "الكمية المدخلة"
+
+#: .\myapp\forms.py:20 .\myapp\models.py:16
+#: .\myapp\templates\myapp\chart.html:68 .\myapp\templates\myapp\chart.html:91
 #: .\myapp\templates\myapp\low_stock.html:34
 #: .\myapp\templates\myapp\product_list.html:73
 #: .\myapp\templates\myapp\received_report.html:56
 #: .\myapp\templates\myapp\report.html:22
-#: .\myapp\templates\myapp\reports.html:25 .\myapp\views.py:219
-#: .\myapp\views.py:286
+#: .\myapp\templates\myapp\reports.html:45
+#: .\myapp\templates\myapp\reports.html:90 .\myapp\views.py:374
+#: .\myapp\views.py:615 .\myapp\views.py:780 .\myapp\views.py:909
 msgid "اسم المنتج"
 msgstr ""
 
-#: .\myapp\forms.py:15
+#: .\myapp\forms.py:21 .\myapp\models.py:17
+#: .\myapp\templates\myapp\product_details.html:9 .\myapp\views.py:910
 msgid "رمز المنتج"
 msgstr ""
 
-#: .\myapp\forms.py:16 .\myapp\templates\myapp\chart.html:118
-#: .\myapp\templates\myapp\product_list.html:75
-#: .\myapp\templates\myapp\received_report.html:57
-#: .\myapp\templates\myapp\report.html:23
-#: .\myapp\templates\myapp\reports.html:27
-msgid "الكمية"
-msgstr ""
+#: .\myapp\forms.py:23
+#, fuzzy
+#| msgid "الكمية الحالية"
+msgid "الكمية الكلية المتاحة"
+msgstr "الكمية الحالية"
 
-#: .\myapp\forms.py:17 .\myapp\templates\myapp\chart.html:71
+#: .\myapp\forms.py:28 .\myapp\models.py:19
 #: .\myapp\templates\myapp\low_stock.html:37
+#: .\myapp\templates\myapp\product_details.html:10
 #: .\myapp\templates\myapp\product_list.html:76
 #: .\myapp\templates\myapp\report.html:24
-#: .\myapp\templates\myapp\reports.html:28 .\myapp\views.py:223
-#: .\myapp\views.py:290
+#: .\myapp\templates\myapp\reports.html:48
+#: .\myapp\templates\myapp\reports.html:93 .\myapp\views.py:377
+#: .\myapp\views.py:617 .\myapp\views.py:782 .\myapp\views.py:912
 msgid "الوحدة"
 msgstr ""
 
-#: .\myapp\forms.py:18 .\myapp\templates\myapp\product_list.html:77
-msgid "الحد الأدنى"
+#: .\myapp\forms.py:29 .\myapp\models.py:20
+#: .\myapp\templates\myapp\low_stock.html:38
+#: .\myapp\templates\myapp\product_details.html:11
+msgid "الحد الأدنى للمخزون"
 msgstr ""
 
-#: .\myapp\forms.py:32
-msgid "الكمية يجب أن تكون رقمًا صالحًا."
+#: .\myapp\forms.py:46 .\myapp\forms.py:66 .\myapp\models.py:61
+#: .\myapp\templates\myapp\chart.html:138
+#: .\myapp\templates\myapp\chart.html:184
+#: .\myapp\templates\myapp\product_list.html:75
+#: .\myapp\templates\myapp\received_report.html:57
+#: .\myapp\templates\myapp\report.html:23
+#: .\myapp\templates\myapp\reports.html:47
+#: .\myapp\templates\myapp\reports.html:92 .\myapp\views.py:376
+#: .\myapp\views.py:911
+msgid "الكمية"
 msgstr ""
 
-#: .\myapp\forms.py:38
+#: .\myapp\forms.py:98
 msgid "الحد الأدنى يجب أن يكون أكبر من صفر."
 msgstr ""
 
-#: .\myapp\forms.py:45 .\myapp\forms.py:48
+#: .\myapp\forms.py:105 .\myapp\forms.py:108
 msgid "رمز المنتج موجود بالفعل."
 msgstr ""
 
-#: .\myapp\forms.py:52 .\myapp\forms.py:63
+#: .\myapp\forms.py:124 .\myapp\forms.py:178
 msgid "البريد الإلكتروني"
 msgstr ""
 
-#: .\myapp\forms.py:64
+#: .\myapp\forms.py:143 .\myapp\forms.py:220
+msgid "المتاح"
+msgstr ""
+
+#: .\myapp\forms.py:150
+#, fuzzy
+#| msgid "الكمية المراد سحبها:"
+msgid "الكمية الكلية المراد سحبها"
+msgstr "الكمية المراد سحبها:"
+
+#: .\myapp\forms.py:173
+msgid "إجمالي الكمية المسحوبة من المخازن يتجاوز الكمية المطلوبة."
+msgstr ""
+
+#: .\myapp\forms.py:179
 msgid "اختر فريقك"
 msgstr ""
 
-#: .\myapp\forms.py:64 .\myapp\templates\myapp\reports.html:30
-#: .\myapp\views.py:224 .\myapp\views.py:291
+#: .\myapp\forms.py:179 .\myapp\models.py:21 .\myapp\models.py:65
+#: .\myapp\templates\myapp\reports.html:53
+#: .\myapp\templates\myapp\reports.html:98 .\myapp\views.py:382
+#: .\myapp\views.py:622 .\myapp\views.py:787
 msgid "الفريق"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_product.html:4
-#: .\myapp\templates\myapp\base.html:29
-msgid "إضافة منتج"
+#: .\myapp\forms.py:197
+#, fuzzy
+#| msgid "الكمية المراد سحبها:"
+msgid "إجمالي الكمية المراد إضافتها"
+msgstr "الكمية المراد سحبها:"
+
+#: .\myapp\forms.py:237
+#, fuzzy
+#| msgid "حدد المنتج ثم أدخل الكمية المراد سحبها."
+msgid "إجمالي الكميات المضافة للمخازن يجب أن يساوي الكمية المراد إضافتها."
+msgstr "حدد المنتج ثم أدخل الكمية المراد سحبها."
+
+#: .\myapp\models.py:10
+#, fuzzy
+#| msgid "الكمية المدخلة"
+msgid "اسم المخزن"
+msgstr "الكمية المدخلة"
+
+#: .\myapp\models.py:18
+#, fuzzy
+#| msgid "الكمية الحالية"
+msgid "الكمية الكلية"
+msgstr "الكمية الحالية"
+
+#: .\myapp\models.py:22 .\myapp\models.py:77
+msgid "المستخدم"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_product.html:8
-#: .\myapp\templates\myapp\index.html:168
-#: .\myapp\templates\myapp\product_list.html:57
-msgid "إضافة منتج جديد"
+#: .\myapp\models.py:23 .\myapp\templates\myapp\product_list.html:78
+#: .\myapp\views.py:914
+#, fuzzy
+#| msgid "الكمية المدخلة"
+msgid "المخازن"
+msgstr "الكمية المدخلة"
+
+#: .\myapp\models.py:43 .\myapp\models.py:58 .\myapp\models.py:92
+#: .\myapp\templates\myapp\chart.html:144
+#: .\myapp\templates\myapp\chart.html:190
+msgid "المنتج"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_product.html:25
-#: .\myapp\templates\myapp\add_quantity.html:38
-#: .\myapp\templates\myapp\edit_product.html:49
-msgid "اسم المنتج:"
+#: .\myapp\models.py:44 .\myapp\models.py:59
+#: .\myapp\templates\myapp\reports.html:50
+#: .\myapp\templates\myapp\reports.html:95 .\myapp\views.py:379
+#: .\myapp\views.py:619 .\myapp\views.py:784
+#, fuzzy
+#| msgid "الكمية المدخلة"
+msgid "المخزن"
+msgstr "الكمية المدخلة"
+
+#: .\myapp\models.py:60 .\myapp\templates\myapp\reports.html:46
+#: .\myapp\templates\myapp\reports.html:91 .\myapp\views.py:375
+msgid "نوع الحركة"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_product.html:26
-msgid "أدخل اسم المنتج"
+#: .\myapp\models.py:62 .\myapp\templates\myapp\received_report.html:58
+#: .\myapp\templates\myapp\report.html:25
+#: .\myapp\templates\myapp\reports.html:49
+#: .\myapp\templates\myapp\reports.html:94 .\myapp\views.py:378
+#: .\myapp\views.py:618 .\myapp\views.py:783
+msgid "التاريخ"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_product.html:30
-#: .\myapp\templates\myapp\edit_product.html:54
-msgid "رمز المنتج:"
+#: .\myapp\models.py:63
+#, fuzzy
+#| msgid "الكمية الحالية"
+msgid "الكمية بعد الحركة"
+msgstr "الكمية الحالية"
+
+#: .\myapp\models.py:64
+#, fuzzy
+#| msgid "الكمية المراد سحبها:"
+msgid "الكمية بالمخزون بعد الحركة"
+msgstr "الكمية المراد سحبها:"
+
+#: .\myapp\models.py:87
+msgid "نوع الإشعار"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_product.html:31
-msgid "أدخل رمز المنتج"
+#: .\myapp\models.py:89
+msgid "الرسالة"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_product.html:35
-#: .\myapp\templates\myapp\edit_product.html:59
-msgid "الكمية:"
+#: .\myapp\models.py:90
+msgid "مقروء"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_product.html:36
-msgid "أدخل الكمية"
+#: .\myapp\models.py:91
+msgid "تاريخ الإنشاء"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_product.html:40
-#: .\myapp\templates\myapp\add_quantity.html:43
-#: .\myapp\templates\myapp\edit_product.html:64
-msgid "الوحدة:"
+#: .\myapp\templates\myapp\add_product_details.html:4
+msgid "إضافة تفاصيل المنتج"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_product.html:41
-msgid "أدخل الوحدة (مثل: كجم، لتر)"
+#: .\myapp\templates\myapp\add_product_details.html:8
+msgid "إضافة منتج جديد - تفاصيل المنتج والكميات"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_product.html:45
-#: .\myapp\templates\myapp\edit_product.html:69
-msgid "الحد الأدنى للمخزون:"
+#: .\myapp\templates\myapp\add_product_details.html:36
+msgid "توزيع الكميات على المخازن المختارة"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_product.html:46
-msgid "أدخل الحد الأدنى للمخزون"
-msgstr ""
-
-#: .\myapp\templates\myapp\add_product.html:49
+#: .\myapp\templates\myapp\add_product_details.html:49
 msgid "إضافة المنتج"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_quantity.html:3
-#: .\myapp\templates\myapp\add_quantity.html:8
+#: .\myapp\templates\myapp\add_product_warehouse_selection.html:8
+msgid "إضافة منتج جديد - اختر المخازن"
+msgstr ""
+
+#: .\myapp\templates\myapp\add_product_warehouse_selection.html:13
+msgid "اختر المخازن التي سيتم تخزين المنتج فيها:"
+msgstr ""
+
+#: .\myapp\templates\myapp\add_product_warehouse_selection.html:19
+#: .\myapp\templates\myapp\add_quantity.html:99
+msgid "التالي"
+msgstr ""
+
+#: .\myapp\templates\myapp\add_quantity.html:4
+#: .\myapp\templates\myapp\add_quantity.html:38
 msgid "إضافة كمية إلى منتج"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_quantity.html:9
+#: .\myapp\templates\myapp\add_quantity.html:40
 msgid "حدد المنتج ثم أدخل الكمية المراد إضافتها."
 msgstr ""
 
-#: .\myapp\templates\myapp\add_quantity.html:25
+#: .\myapp\templates\myapp\add_quantity.html:57
+#: .\myapp\templates\myapp\withdraw_quantity.html:51
 msgid "اختر المنتج:"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_quantity.html:27
+#: .\myapp\templates\myapp\add_quantity.html:59
+#: .\myapp\templates\myapp\withdraw_quantity.html:53
 msgid "ابحث عن المنتج"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_quantity.html:48
+#: .\myapp\templates\myapp\add_quantity.html:64
+#: .\myapp\templates\myapp\withdraw_quantity.html:58
+msgid "قراءة الباركود"
+msgstr ""
+
+#: .\myapp\templates\myapp\add_quantity.html:67
+#: .\myapp\templates\myapp\withdraw_quantity.html:61
+msgid "إيقاف الكاميرا"
+msgstr ""
+
+#: .\myapp\templates\myapp\add_quantity.html:80
+#: .\myapp\templates\myapp\withdraw_quantity.html:74
+msgid "اسم المنتج:"
+msgstr ""
+
+#: .\myapp\templates\myapp\add_quantity.html:85
+#: .\myapp\templates\myapp\withdraw_quantity.html:79
+msgid "الوحدة:"
+msgstr ""
+
+#: .\myapp\templates\myapp\add_quantity.html:90
+#: .\myapp\templates\myapp\withdraw_quantity.html:84
 msgid "الكمية المتاحة:"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_quantity.html:53
+#: .\myapp\templates\myapp\add_quantity.html:95
 msgid "الكمية المراد إضافتها:"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_quantity.html:57
-msgid "إضافة"
-msgstr ""
-
-#: .\myapp\templates\myapp\add_quantity.html:58
+#: .\myapp\templates\myapp\add_quantity.html:101
+#: .\myapp\templates\myapp\add_quantity_warehouses.html:48
+#: .\myapp\templates\myapp\withdraw_quantity.html:94
 msgid "رجوع"
 msgstr ""
 
-#: .\myapp\templates\myapp\add_quantity.html:120
+#: .\myapp\templates\myapp\add_quantity.html:214
+#: .\myapp\templates\myapp\withdraw_quantity.html:207
 msgid "لا يوجد منتجات مطابقة"
 msgstr ""
 
-#: .\myapp\templates\myapp\base.html:8 .\myapp\templates\myapp\base.html:18
-#: .\myapp\templates\myapp\index.html:166
+#: .\myapp\templates\myapp\add_quantity.html:341
+#: .\myapp\templates\myapp\withdraw_quantity.html:334
+msgid "لم يتم العثور على منتج بهذا الباركود"
+msgstr ""
+
+#: .\myapp\templates\myapp\add_quantity.html:351
+#: .\myapp\templates\myapp\withdraw_quantity.html:344
+msgid "حدث خطأ أثناء البحث عن المنتج"
+msgstr ""
+
+#: .\myapp\templates\myapp\add_quantity_warehouses.html:5
+#: .\myapp\templates\myapp\add_quantity_warehouses.html:10
+msgid "توزيع كمية الإضافة على المخازن"
+msgstr ""
+
+#: .\myapp\templates\myapp\add_quantity_warehouses.html:12
+msgid "الرجاء تحديد الكمية المراد إضافتها لكل مخزن للمنتج:"
+msgstr ""
+
+#: .\myapp\templates\myapp\add_quantity_warehouses.html:13
+#, fuzzy
+#| msgid "الكمية المراد سحبها:"
+msgid "إجمالي الكمية المراد إضافتها:"
+msgstr "الكمية المراد سحبها:"
+
+#: .\myapp\templates\myapp\add_quantity_warehouses.html:46
+#, fuzzy
+#| msgid "الكمية المضافة"
+msgid "تأكيد الإضافة"
+msgstr "الكمية المضافة"
+
+#: .\myapp\templates\myapp\base.html:8 .\myapp\templates\myapp\base.html:19
+#: .\myapp\templates\myapp\index.html:170
 #: .\myapp\templates\myapp\product_list.html:7
 #: .\myapp\templates\myapp\product_list.html:50
 msgid "إدارة المخزون"
 msgstr ""
 
-#: .\myapp\templates\myapp\base.html:20
+#: .\myapp\templates\myapp\base.html:21
 msgid "تبديل التنقل"
 msgstr ""
 
-#: .\myapp\templates\myapp\base.html:26
+#: .\myapp\templates\myapp\base.html:27
 msgid "الصفحة الرئيسية"
 msgstr ""
 
-#: .\myapp\templates\myapp\base.html:32
+#: .\myapp\templates\myapp\base.html:30
+msgid "إضافة منتج"
+msgstr ""
+
+#: .\myapp\templates\myapp\base.html:33
 msgid "عرض المخزون"
 msgstr ""
 
-#: .\myapp\templates\myapp\base.html:35
+#: .\myapp\templates\myapp\base.html:36
 msgid "التقارير"
 msgstr ""
 
-#: .\myapp\templates\myapp\base.html:40
+#: .\myapp\templates\myapp\base.html:41
 #: .\myapp\templates\myapp\product_list.html:63
 msgid "استيراد من Excel"
 msgstr ""
 
-#: .\myapp\templates\myapp\base.html:43
+#: .\myapp\templates\myapp\base.html:44
 msgid "استيراد مواد خام"
 msgstr ""
 
-#: .\myapp\templates\myapp\base.html:44
+#: .\myapp\templates\myapp\base.html:45
 msgid "استيراد صيانة"
 msgstr ""
 
@@ -218,25 +369,32 @@ msgstr ""
 msgid "تقرير المنتجات المسحوبة"
 msgstr ""
 
-#: .\myapp\templates\myapp\chart.html:64
-msgid "المنتجات الأكثر سحبًا"
-msgstr ""
+#: .\myapp\templates\myapp\chart.html:62
+#, fuzzy
+#| msgid "الكمية المراد سحبها:"
+msgid "المواد الخام الأكثر سحبًا"
+msgstr "الكمية المراد سحبها:"
 
-#: .\myapp\templates\myapp\chart.html:70
+#: .\myapp\templates\myapp\chart.html:69 .\myapp\templates\myapp\chart.html:92
 msgid "كمية السحب الإجمالية"
 msgstr ""
 
-#: .\myapp\templates\myapp\chart.html:82
-msgid "لا توجد بيانات لعرض المنتجات المسحوبة."
+#: .\myapp\templates\myapp\chart.html:79
+msgid "لا توجد بيانات لعرض المواد الخام المسحوبة."
 msgstr ""
 
-#: .\myapp\templates\myapp\chart.html:104 .\myapp\views.py:287
-msgid "الكمية المسحوبة"
-msgstr "الكمية المسحوبة"
+#: .\myapp\templates\myapp\chart.html:85
+msgid "الأوراق / التغليف الأكثر سحبًا"
+msgstr ""
+
+#: .\myapp\templates\myapp\chart.html:102
+msgid "لا توجد بيانات لعرض الأوراق / التغليف المسحوبة."
+msgstr ""
 
 #: .\myapp\templates\myapp\chart.html:124
-msgid "المنتج"
-msgstr ""
+#: .\myapp\templates\myapp\chart.html:170 .\myapp\views.py:781
+msgid "الكمية المسحوبة"
+msgstr "الكمية المسحوبة"
 
 #: .\myapp\templates\myapp\confirm_delete.html:4
 #: .\myapp\templates\myapp\confirm_delete.html:8
@@ -252,6 +410,7 @@ msgid "؟"
 msgstr ""
 
 #: .\myapp\templates\myapp\confirm_delete.html:9
+#: .\myapp\templates\myapp\withdraw_quantity_warehouses.html:49
 msgid "إلغاء"
 msgstr ""
 
@@ -260,16 +419,24 @@ msgstr ""
 msgid "تعديل منتج"
 msgstr ""
 
-#: .\myapp\templates\myapp\edit_product.html:33
+#: .\myapp\templates\myapp\edit_product.html:30
 msgid "حدثت بعض الأخطاء:"
 msgstr ""
 
-#: .\myapp\templates\myapp\edit_product.html:73
-#: .\myapp\templates\myapp\product_list.html:90
-msgid "تعديل"
+#: .\myapp\templates\myapp\edit_product.html:58
+msgid "توزيع الكميات على المخازن"
 msgstr ""
 
-#: .\myapp\templates\myapp\edit_product.html:96
+#: .\myapp\templates\myapp\edit_product.html:71
+msgid "حفظ التعديلات"
+msgstr ""
+
+#: .\myapp\templates\myapp\edit_product.html:72
+#: .\myapp\templates\myapp\product_details.html:24
+msgid "الرجوع لقائمة المنتجات"
+msgstr ""
+
+#: .\myapp\templates\myapp\edit_product.html:95
 msgid "يرجى ملء جميع الحقول."
 msgstr ""
 
@@ -349,65 +516,76 @@ msgstr ""
 msgid "نظام إدارة المنتجات"
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:169
+#: .\myapp\templates\myapp\index.html:173
+#: .\myapp\templates\myapp\product_list.html:57
+msgid "إضافة منتج جديد"
+msgstr ""
+
+#: .\myapp\templates\myapp\index.html:174
 msgid "قائمة المنتجات"
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:170
+#: .\myapp\templates\myapp\index.html:175
 #: .\myapp\templates\myapp\product_list.html:58
 msgid "إضافة كمية"
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:171
+#: .\myapp\templates\myapp\index.html:176
 #: .\myapp\templates\myapp\product_list.html:59
 msgid "سحب كمية"
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:172
+#: .\myapp\templates\myapp\index.html:177
 msgid "المنتجات ذات المخزون المنخفض"
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:175
+#: .\myapp\templates\myapp\index.html:180
 #: .\myapp\templates\myapp\product_list.html:45
 msgid "الرئيسية"
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:176
-#: .\myapp\templates\myapp\index.html:198
+#: .\myapp\templates\myapp\index.html:181
+#: .\myapp\templates\myapp\index.html:218
 msgid "عن الموقع"
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:177
-#: .\myapp\templates\myapp\index.html:205
+#: .\myapp\templates\myapp\index.html:182
+#: .\myapp\templates\myapp\index.html:225
 msgid "اتصل بنا"
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:181
+#: .\myapp\templates\myapp\index.html:194
+#: .\myapp\templates\myapp\notifications.html:4
+#: .\myapp\templates\myapp\notifications.html:8
+msgid "الإشعارات"
+msgstr ""
+
+#: .\myapp\templates\myapp\index.html:201
 msgid "تسجيل الخروج"
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:189
+#: .\myapp\templates\myapp\index.html:209
 msgid "مرحبًا بكم في نظام إدارة المنتجات"
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:190
+#: .\myapp\templates\myapp\index.html:210
 msgid "إدارة متكاملة وسهلة لمنتجاتك وحركاتك اليومية."
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:199
+#: .\myapp\templates\myapp\index.html:219
 msgid ""
 "هذا النظام يتيح لك إدارة المنتجات، تتبع الحركات، وإنشاء التقارير بكل سهولة."
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:206
+#: .\myapp\templates\myapp\index.html:226
 msgid "البريد الإلكتروني:"
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:207
+#: .\myapp\templates\myapp\index.html:227
 msgid "الهاتف:"
 msgstr ""
 
-#: .\myapp\templates\myapp\index.html:212
+#: .\myapp\templates\myapp\index.html:232
 msgid "© 2025 جميع الحقوق محفوظة."
 msgstr ""
 
@@ -467,7 +645,6 @@ msgstr ""
 #: .\myapp\templates\myapp\low_stock.html:25
 #: .\myapp\templates\myapp\product_list.html:53
 #: .\myapp\templates\myapp\report.html:15
-#: .\myapp\templates\myapp\reports.html:16
 msgid "ابحث عن منتج..."
 msgstr ""
 
@@ -478,10 +655,6 @@ msgstr ""
 
 #: .\myapp\templates\myapp\low_stock.html:36
 msgid "الكمية المتوفرة"
-msgstr ""
-
-#: .\myapp\templates\myapp\low_stock.html:38
-msgid "الحد الأدنى للمخزون"
 msgstr ""
 
 #: .\myapp\templates\myapp\low_stock.html:39
@@ -498,6 +671,18 @@ msgstr ""
 
 #: .\myapp\templates\myapp\low_stock.html:58
 msgid "لا توجد منتجات ناقصة في المخزون حالياً."
+msgstr ""
+
+#: .\myapp\templates\myapp\notifications.html:15
+msgid "مضت"
+msgstr ""
+
+#: .\myapp\templates\myapp\notifications.html:19
+msgid "تحديد كمقروء"
+msgstr ""
+
+#: .\myapp\templates\myapp\notifications.html:25
+msgid "لا يوجد لديك إشعارات حالياً."
 msgstr ""
 
 #: .\myapp\templates\myapp\password_reset_body.txt:3
@@ -552,6 +737,19 @@ msgid ""
 "من رسالة البريد الإلكتروني الخاصة بك لمعرفة حالة العملية."
 msgstr ""
 
+#: .\myapp\templates\myapp\product_details.html:4
+#: .\myapp\templates\myapp\product_details.html:8
+msgid "تفاصيل المنتج"
+msgstr ""
+
+#: .\myapp\templates\myapp\product_details.html:13
+msgid "المخازن والكميات"
+msgstr ""
+
+#: .\myapp\templates\myapp\product_details.html:21
+msgid "هذا المنتج غير متوفر في أي مخزن حاليًا."
+msgstr ""
+
 #: .\myapp\templates\myapp\product_list.html:60
 msgid "عرض النواقص"
 msgstr ""
@@ -573,19 +771,38 @@ msgstr ""
 msgid "عدد المنتجات:"
 msgstr ""
 
-#: .\myapp\templates\myapp\product_list.html:78
+#: .\myapp\templates\myapp\product_list.html:77 .\myapp\views.py:913
+msgid "الحد الأدنى"
+msgstr ""
+
+#: .\myapp\templates\myapp\product_list.html:79
 msgid "الإجراءات"
 msgstr ""
 
-#: .\myapp\templates\myapp\product_list.html:91
-msgid "هل أنت متأكد من الحذف؟"
-msgstr ""
-
-#: .\myapp\templates\myapp\product_list.html:91
-msgid "حذف"
+#: .\myapp\templates\myapp\product_list.html:94
+msgid "غير موجود في أي مخزن"
 msgstr ""
 
 #: .\myapp\templates\myapp\product_list.html:98
+msgid "تعديل"
+msgstr ""
+
+#: .\myapp\templates\myapp\product_list.html:99
+msgid "هل أنت متأكد من الحذف؟"
+msgstr ""
+
+#: .\myapp\templates\myapp\product_list.html:99
+msgid "حذف"
+msgstr ""
+
+#: .\myapp\templates\myapp\product_list.html:100
+#, fuzzy
+#| msgid "الكمية المضافة"
+msgid "عرض الكميات بالمخازن"
+msgstr "الكمية المضافة"
+
+#: .\myapp\templates\myapp\product_list.html:104
+#: .\myapp\templates\myapp\product_list.html:109
 msgid "لا يوجد منتجات في المخزون حاليًا."
 msgstr ""
 
@@ -596,13 +813,6 @@ msgstr ""
 
 #: .\myapp\templates\myapp\received_report.html:48
 msgid "ابحث عن منتج أو تاريخ..."
-msgstr ""
-
-#: .\myapp\templates\myapp\received_report.html:58
-#: .\myapp\templates\myapp\report.html:25
-#: .\myapp\templates\myapp\reports.html:29 .\myapp\views.py:221
-#: .\myapp\views.py:288
-msgid "التاريخ"
 msgstr ""
 
 #: .\myapp\templates\myapp\received_report.html:72
@@ -622,14 +832,14 @@ msgid "تصدير إلى PDF"
 msgstr ""
 
 #: .\myapp\templates\myapp\report.html:40
-#: .\myapp\templates\myapp\reports.html:45
-#: .\myapp\templates\myapp\reports.html:51
+#: .\myapp\templates\myapp\reports.html:116
+#: .\myapp\templates\myapp\reports.html:122
 msgid "لا توجد حركات لعرضها في هذا التقرير."
 msgstr ""
 
 #: .\myapp\templates\myapp\reports.html:4
-#: .\myapp\templates\myapp\reports.html:8 .\myapp\views.py:111
-msgid "سجل الحركات"
+#: .\myapp\templates\myapp\reports.html:8
+msgid "سجل الحركات والتقارير"
 msgstr ""
 
 #: .\myapp\templates\myapp\reports.html:11
@@ -640,132 +850,221 @@ msgstr ""
 msgid "تنزيل تقرير السحب (Excel)"
 msgstr ""
 
-#: .\myapp\templates\myapp\reports.html:26
-msgid "نوع الحركة"
+#: .\myapp\templates\myapp\reports.html:15
+msgid "استعلام عن الحركات"
 msgstr ""
 
-#: .\myapp\views.py:38
-msgid "اسم المستخدم أو كلمة المرور غير صحيحة."
+#: .\myapp\templates\myapp\reports.html:18
+msgid "ابحث عن المنتج (اسم أو رمز)"
 msgstr ""
 
-#: .\myapp\views.py:44
-msgid "تم تسجيل الخروج بنجاح."
+#: .\myapp\templates\myapp\reports.html:19
+msgid "ادخل اسم المنتج أو رمزه"
 msgstr ""
 
-#: .\myapp\views.py:94
-msgid "حدث خطأ في إضافة المنتج. يرجى التحقق من النموذج."
+#: .\myapp\templates\myapp\reports.html:21
+#: .\myapp\templates\myapp\reports.html:140
+#, fuzzy
+#| msgid "الكمية المدخلة"
+msgid "اختر المنتج"
+msgstr "الكمية المدخلة"
+
+#: .\myapp\templates\myapp\reports.html:27
+msgid "تاريخ البداية"
 msgstr ""
 
-#: .\myapp\views.py:125
-msgid "تم حذف جميع المنتجات الخاصة بك بنجاح."
+#: .\myapp\templates\myapp\reports.html:31
+msgid "تاريخ النهاية"
 msgstr ""
 
-#: .\myapp\views.py:147
-msgid "حدث خطأ في تعديل المنتج. يرجى التحقق من النموذج."
+#: .\myapp\templates\myapp\reports.html:35
+msgid "بحث"
 msgstr ""
 
-#: .\myapp\views.py:160
-msgid "تم حذف المنتج بنجاح!"
+#: .\myapp\templates\myapp\reports.html:39
+msgid "نتائج البحث"
 msgstr ""
 
-#: .\myapp\views.py:172 .\myapp\views.py:241
-msgid "الكمية يجب أن تكون أكبر من صفر"
+#: .\myapp\templates\myapp\reports.html:51
+#: .\myapp\templates\myapp\reports.html:96 .\myapp\views.py:380
+#: .\myapp\views.py:620 .\myapp\views.py:785
+#, fuzzy
+#| msgid "الكمية الحالية"
+msgid "الرصيد الحالي بالمخزن"
+msgstr "الكمية الحالية"
+
+#: .\myapp\templates\myapp\reports.html:52
+#: .\myapp\templates\myapp\reports.html:97 .\myapp\views.py:381
+#: .\myapp\views.py:621 .\myapp\views.py:786
+msgid "الرصيد الكلي بكل المخازن"
 msgstr ""
 
-#: .\myapp\views.py:220
-msgid "الكمية المستلمة"
+#: .\myapp\templates\myapp\reports.html:71
+msgid "لا توجد نتائج للبحث."
 msgstr ""
 
-#: .\myapp\views.py:222 .\myapp\views.py:289
-msgid "الكمية بعد التعديل"
+#: .\myapp\templates\myapp\reports.html:76
+msgid "تنزيل نتائج البحث (Excel)"
 msgstr ""
 
-#: .\myapp\views.py:246
-msgid "الكمية المسحوبة أكبر من المخزون المتوفر."
+#: .\myapp\templates\myapp\reports.html:82
+msgid "سجل الحركات الأخير"
 msgstr ""
 
-#: .\myapp\views.py:307
-msgid "لا توجد بيانات لعرض الرسم البياني."
-msgstr ""
-
-#: .\myapp\views.py:383
-msgid "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني."
-msgstr ""
-
-#: .\myapp\views.py:386
-msgid "هذا البريد الإلكتروني غير مسجل."
-msgstr ""
-
-#: .\myapp\views.py:405
-msgid "تم تعيين كلمة المرور الجديدة بنجاح. يمكنك تسجيل الدخول الآن."
-msgstr ""
-
-#: .\myapp\views.py:408
-msgid "كلمتا المرور غير متطابقتين."
-msgstr ""
-
-#: .\myapp\views.py:412
-msgid "رابط إعادة تعيين كلمة المرور غير صالح."
-msgstr ""
-
-#: .\myapp\views.py:433
-msgid "تم إنشاء حسابك بنجاح. يمكنك تسجيل الدخول الآن."
-msgstr ""
-
-#: .\myapp\views.py:446 .\myapp\views.py:480 .\myapp\views.py:514
-msgid "خطأ: ملف Excel لا يحتوي على جميع الأعمدة المطلوبة."
-msgstr ""
-
-#: .\myapp\views.py:451
-msgid "خطأ: المستخدم الحالي ليس لديه فريق محدد."
-msgstr ""
-
-#: .\myapp\views.py:469
-msgid "تم استيراد البيانات بنجاح."
-msgstr ""
-
-#: .\myapp\views.py:485
-msgid "خطأ: لم يتم العثور على فريق \"فريق المواد الخام\"."
-msgstr ""
-
-#: .\myapp\views.py:503
-msgid "تم استيراد منتجات المواد الخام بنجاح."
-msgstr ""
-
-#: .\myapp\views.py:519
-msgid "خطأ: لم يتم العثور على فريق \"فريق الصيانة\"."
-msgstr ""
-
-#: .\myapp\views.py:537
-msgid "تم استيراد منتجات الصيانة بنجاح."
-msgstr ""
-
+#: .\myapp\templates\myapp\withdraw_quantity.html:4
+#: .\myapp\templates\myapp\withdraw_quantity.html:34
 msgid "سحب كمية من منتج"
 msgstr "سحب كمية من منتج"
 
+#: .\myapp\templates\myapp\withdraw_quantity.html:35
 msgid "حدد المنتج ثم أدخل الكمية المراد سحبها."
 msgstr "حدد المنتج ثم أدخل الكمية المراد سحبها."
 
+#: .\myapp\templates\myapp\withdraw_quantity.html:89
 msgid "الكمية المراد سحبها:"
 msgstr "الكمية المراد سحبها:"
 
-msgid "الكمية الحالية"
-msgstr "الكمية الحالية"
+#: .\myapp\templates\myapp\withdraw_quantity.html:90
+msgid "أدخل الكمية"
+msgstr ""
 
-msgid "الكمية المضافة"
-msgstr "الكمية المضافة"
+#: .\myapp\templates\myapp\withdraw_quantity.html:93
+msgid "تحديد المخازن والكمية"
+msgstr ""
 
-msgid "الكمية المحدثة"
-msgstr "الكمية المحدثة"
+#: .\myapp\templates\myapp\withdraw_quantity_warehouses.html:5
+#: .\myapp\templates\myapp\withdraw_quantity_warehouses.html:10
+#, fuzzy
+#| msgid "سحب كمية من منتج"
+msgid "سحب كمية من المخازن"
+msgstr "سحب كمية من منتج"
 
-msgid "الكمية المدخلة"
+#: .\myapp\templates\myapp\withdraw_quantity_warehouses.html:12
+#, fuzzy
+#| msgid "حدد المنتج ثم أدخل الكمية المراد سحبها."
+msgid "الرجاء تحديد الكمية المراد سحبها من كل مخزن للمنتج:"
+msgstr "حدد المنتج ثم أدخل الكمية المراد سحبها."
+
+#: .\myapp\templates\myapp\withdraw_quantity_warehouses.html:13
+#, fuzzy
+#| msgid "الكمية المسحوبة"
+msgid "إجمالي الكمية المطلوبة:"
+msgstr "الكمية المسحوبة"
+
+#: .\myapp\templates\myapp\withdraw_quantity_warehouses.html:48
+msgid "تأكيد السحب"
+msgstr ""
+
+#: .\myapp\views.py:51
+msgid "الإشعار غير موجود."
+msgstr ""
+
+#: .\myapp\views.py:63
+msgid "اسم المستخدم أو كلمة المرور غير صحيحة."
+msgstr ""
+
+#: .\myapp\views.py:69
+msgid "تم تسجيل الخروج بنجاح."
+msgstr ""
+
+#: .\myapp\views.py:128 .\myapp\views.py:478
+msgid "حدث خطأ في تعديل المنتج. يرجى التحقق من النموذج."
+msgstr ""
+
+#: .\myapp\views.py:184 .\myapp\views.py:427
+msgid "استلام"
+msgstr ""
+
+#: .\myapp\views.py:213
+msgid "حدث خطأ في إضافة المنتج. يرجى التحقق من النموذج."
+msgstr ""
+
+#: .\myapp\views.py:269
+msgid "سجل الحركات"
+msgstr ""
+
+#: .\myapp\views.py:373 .\myapp\views.py:614 .\myapp\views.py:779
+msgid "#"
+msgstr ""
+
+#: .\myapp\views.py:427
+msgid "سحب"
+msgstr ""
+
+#: .\myapp\views.py:456
+msgid "تم حذف جميع المنتجات الخاصة بك بنجاح."
+msgstr ""
+
+#: .\myapp\views.py:491
+msgid "تم حذف المنتج بنجاح!"
+msgstr ""
+
+#: .\myapp\views.py:580 .\myapp\views.py:748
+msgid "حدث خطأ في البيانات المدخلة. الرجاء التأكد من صحة البيانات."
+msgstr ""
+
+#: .\myapp\views.py:616
+#, fuzzy
+#| msgid "الكمية المدخلة"
+msgid "الكمية المستلمة"
 msgstr "الكمية المدخلة"
 
-msgid "الكمية الصادرة"
-msgstr "الكمية الصادرة"
+#: .\myapp\views.py:963
+msgid "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني."
+msgstr ""
 
-msgid "قراءة الباركود"
-msgstr "قراءة الباركود"
+#: .\myapp\views.py:966
+msgid "هذا البريد الإلكتروني غير مسجل."
+msgstr ""
 
-msgid "إيقاف الكاميرا"
-msgstr "إيقاف الكاميرا"
+#: .\myapp\views.py:985
+msgid "تم تعيين كلمة المرور الجديدة بنجاح. يمكنك تسجيل الدخول الآن."
+msgstr ""
+
+#: .\myapp\views.py:988
+msgid "كلمتا المرور غير متطابقتين."
+msgstr ""
+
+#: .\myapp\views.py:992
+msgid "رابط إعادة تعيين كلمة المرور غير صالح."
+msgstr ""
+
+#: .\myapp\views.py:1013
+msgid "تم إنشاء حسابك بنجاح. يمكنك تسجيل الدخول الآن."
+msgstr ""
+
+#: .\myapp\views.py:1027 .\myapp\views.py:1099 .\myapp\views.py:1170
+msgid ""
+"خطأ: ملف Excel لا يحتوي على جميع الأعمدة المطلوبة (اسم المنتج، الرمز، "
+"الوحدة، الحد الأدنى، الكمية)."
+msgstr ""
+
+#: .\myapp\views.py:1035
+msgid "خطأ: المستخدم الحالي ليس لديه فريق محدد."
+msgstr ""
+
+#: .\myapp\views.py:1087
+msgid "تم استيراد البيانات بنجاح."
+msgstr ""
+
+#: .\myapp\views.py:1107
+msgid "خطأ: لم يتم العثور على فريق \"فريق المواد الخام\"."
+msgstr ""
+
+#: .\myapp\views.py:1158
+msgid "تم استيراد منتجات المواد الخام بنجاح."
+msgstr ""
+
+#: .\myapp\views.py:1178
+msgid "خطأ: لم يتم العثور على فريق \"فريق الصيانة\"."
+msgstr ""
+
+#: .\myapp\views.py:1229
+msgid "تم استيراد منتجات الصيانة بنجاح."
+msgstr ""
+
+#~ msgid "الكمية المحدثة"
+#~ msgstr "الكمية المحدثة"
+
+#~ msgid "الكمية الصادرة"
+#~ msgstr "الكمية الصادرة"

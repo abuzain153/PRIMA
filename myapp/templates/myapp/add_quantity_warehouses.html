@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% translate "توزيع كمية الإضافة على المخازن" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container mt-5 p-4 border rounded">
+        <h1 class="text-center">{% translate "توزيع كمية الإضافة على المخازن" %}</h1>
+        <p class="text-center text-muted">
+            {% translate "الرجاء تحديد الكمية المراد إضافتها لكل مخزن للمنتج:" %} <strong>{{ product.product_name }}</strong>.
+            {% translate "إجمالي الكمية المراد إضافتها:" %} <strong>{{ quantity_to_add }}</strong> {{ product.unit }}.
+        </p>
+
+        {% if messages %}
+        <div class="alert alert-dismissible fade show mt-3">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <input type="hidden" name="total_quantity_to_add" value="{{ quantity_to_add }}">
+
+            {% if add_form.errors %}
+                <div class="alert alert-danger">
+                    {% for error in add_form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                    {% for field in add_form %}
+                        {% if field.errors %}
+                            <p>{{ field.label }}: {{ field.errors }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {{ add_form|crispy }}
+            <button type="submit" name="add_to_warehouses" class="btn btn-primary w-100 mt-3">{% translate "تأكيد الإضافة" %}</button>
+            <button type="button" onclick="window.history.back();" class="btn btn-secondary w-100 mt-2">
+                {% translate "رجوع" %}
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
