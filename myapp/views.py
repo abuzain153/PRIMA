@@ -222,52 +222,36 @@ def movement_history(request):
     }
     return render(request, 'myapp/movement_history.html', context)
 
-from django.db.models import Sum
 
 @login_required
 def show_reports(request):
     """
-    عرض سجل الحركات مع معلومات المخزون، مع تطبيق ترقيم الصفحات.
+    عرض سجل الحركات مع معلومات المخزون (المخزنة في وقت الحركة)، مع تطبيق ترقيم الصفحات.
     """
     movements = Movement.objects.all().select_related('product', 'warehouse', 'team').order_by('-date')
 
     # استخدام Paginator لتقسيم النتائج
-    paginator = Paginator(movements, 20)  # 20 حركة في الصفحة، يمكنك تغييرها
+    paginator = Paginator(movements, 20)
     page = request.GET.get('page')
     try:
         movements_page = paginator.page(page)
     except PageNotAnInteger:
-        # إذا لم يكن page عددًا صحيحًا، قم بإظهار الصفحة الأولى.
         movements_page = paginator.page(1)
     except EmptyPage:
-        # إذا كان page خارج النطاق (على سبيل المثال، 9999)، قم بإظهار الصفحة الأخيرة.
         movements_page = paginator.page(paginator.num_pages)
 
     movements_with_stock_info = []
-    for movement in movements_page: # استخدم movements_page هنا وليس movements
-        try:
-            product_warehouse = ProductWarehouse.objects.get(
-                product=movement.product,
-                warehouse=movement.warehouse
-            )
-            current_stock = product_warehouse.quantity
-        except ProductWarehouse.DoesNotExist:
-            current_stock = 0  # استخدم 0 بدلاً من Decimal('0.00') إذا كان الحقل عددًا صحيحًا
-
-        total_stock_all_warehouses = ProductWarehouse.objects.filter(
-            product=movement.product
-        ).aggregate(Sum('quantity'))['quantity__sum'] or 0 # استخدم 0
-        
+    for movement in movements_page:
         movements_with_stock_info.append({
             'movement': movement,
-            'current_stock': current_stock,
-            'total_stock_all_warehouses': total_stock_all_warehouses,
+            'current_stock': movement.current_stock_at_movement,  # استخدم الحقل المخزن
+            'total_stock_all_warehouses': movement.total_stock_at_movement,  # استخدم الحقل المخزن
         })
 
     context = {
         'movements_with_stock_info': movements_with_stock_info,
         'report_type': _('سجل الحركات'),
-        'movements_page': movements_page, # قم بتمرير كائن الصفحة إلى القالب
+        'movements_page': movements_page,
     }
     return render(request, 'myapp/reports.html', context)
 
@@ -281,15 +265,14 @@ def get_products_json(request):
     return JsonResponse(list(products), safe=False)
 
 
-
 @login_required
 def search_movements(request):
     """
     البحث عن الحركات بناءً على معايير متعددة، مع تطبيق ترقيم الصفحات.
     """
     product_query = request.GET.get('product_query')
-    start_date_str = request.GET.get('start_date')  # احصل على التاريخ كسلسلة نصية
-    end_date_str = request.GET.get('end_date')    # احصل على التاريخ كسلسلة نصية
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
 
     search_results_with_stock = []
     q_objects = Q()
@@ -302,23 +285,21 @@ def search_movements(request):
             start_date = timezone.make_aware(datetime.strptime(start_date_str, '%Y-%m-%d')).date()
             q_objects &= Q(date__gte=start_date)
         except ValueError:
-            pass  # تجاهل التاريخ غير الصالح أو قم بإجراء معالجة مناسبة
+            pass
 
     if end_date_str:
         try:
             end_date = timezone.make_aware(datetime.strptime(end_date_str, '%Y-%m-%d')).date()
             q_objects &= Q(date__lte=end_date)
         except ValueError:
-            pass  # تجاهل التاريخ غير الصالح أو قم بإجراء معالجة مناسبة
+            pass
 
-    # استخدم filter فقط إذا كان هناك أي قيود بحث.
     if q_objects:
         search_results = Movement.objects.filter(q_objects).select_related('product', 'warehouse', 'team').order_by('-date')
     else:
-        search_results = Movement.objects.none() # Return empty queryset if no search
+        search_results = Movement.objects.none()
 
-    # استخدام Paginator لتقسيم النتائج
-    paginator = Paginator(search_results, 20)  # 20 حركة في الصفحة
+    paginator = Paginator(search_results, 20)
     page = request.GET.get('page')
     try:
         search_results_page = paginator.page(page)
@@ -327,29 +308,16 @@ def search_movements(request):
     except EmptyPage:
         search_results_page = paginator.page(paginator.num_pages)
 
-    for movement in search_results_page: # Iterate over the paginated page
-        try:
-            product_warehouse = ProductWarehouse.objects.get(
-                product=movement.product,
-                warehouse=movement.warehouse
-            )
-            current_stock = product_warehouse.quantity
-        except ProductWarehouse.DoesNotExist:
-            current_stock = 0
-
-        total_stock_all_warehouses = ProductWarehouse.objects.filter(
-            product=movement.product
-        ).aggregate(Sum('quantity'))['quantity__sum'] or 0
-
+    for movement in search_results_page:
         search_results_with_stock.append({
             'movement': movement,
-            'current_stock': current_stock,
-            'total_stock_all_warehouses': total_stock_all_warehouses,
+            'current_stock': movement.current_stock_at_movement,  # استخدم الحقل المخزن
+            'total_stock_all_warehouses': movement.total_stock_at_movement,  # استخدم الحقل المخزن
         })
 
     context = {
         'search_results': search_results_with_stock,
-        'search_results_page': search_results_page, # Pass the page object
+        'search_results_page': search_results_page,
     }
     return render(request, 'myapp/reports.html', context)
 
@@ -386,7 +354,7 @@ def search_movements_excel(request):
     q_objects = Q()
     if product_query:
         q_objects &= Q(product_id=product_query)
-    
+
     if start_date_str:
         try:
             start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
@@ -400,7 +368,6 @@ def search_movements_excel(request):
         except ValueError:
             pass
 
-    # Use filter only if there are search parameters
     if q_objects:
         search_results = Movement.objects.filter(q_objects).select_related('product', 'warehouse', 'team').order_by('-date')
     else:
@@ -408,19 +375,6 @@ def search_movements_excel(request):
 
     row_num = 1
     for index, movement in enumerate(search_results):
-        try:
-            product_warehouse = ProductWarehouse.objects.get(
-                product=movement.product,
-                warehouse=movement.warehouse
-            )
-            current_stock = product_warehouse.quantity
-        except ProductWarehouse.DoesNotExist:
-            current_stock = 0
-
-        total_stock_all_warehouses = ProductWarehouse.objects.filter(
-            product=movement.product
-        ).aggregate(Sum('quantity'))['quantity__sum'] or 0
-
         row_data = [
             index + 1,
             movement.product.product_name,
@@ -429,8 +383,8 @@ def search_movements_excel(request):
             movement.product.unit,
             movement.date.strftime('%Y-%m-%d %H:%M:%S'),
             movement.warehouse.name,
-            current_stock,
-            total_stock_all_warehouses,
+            movement.current_stock_at_movement,  # استخدم الحقل المخزن
+            movement.total_stock_at_movement,  # استخدم الحقل المخزن
             movement.team.name,
         ]
         worksheet.write_row(row_num, 0, row_data, cell_format)
@@ -443,6 +397,7 @@ def search_movements_excel(request):
     response = HttpResponse(content=output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename="search_results.xlsx"'
     return response
+
 # قائمة المنتجات
 @login_required
 def product_list(request):
@@ -493,21 +448,21 @@ class ProductDeleteView(DeleteView):
 
 # إضافة كمية إلى منتج (تعديل لعرض فقط منتجات المستخدم والتحقق من ملكية المنتج)
 
+
 @login_required
 def add_quantity(request):
     if request.method == 'POST' and 'select_product' in request.POST:
         product_id = request.POST.get('product_id')
-        quantity_to_add = request.POST.get('quantity_to_add')
         product = get_object_or_404(Product, pk=product_id, team__in=request.user.groups.all())
 
         add_form = AddQuantityToWarehousesForm(
             product=product,
-            initial={'product_id': product_id, 'total_quantity_to_add': quantity_to_add}
+            initial={'product_id': product_id, 'total_quantity_to_add': request.POST.get('quantity_to_add')}
         )
         context = {
             'add_form': add_form,
             'product': product,
-            'quantity_to_add': quantity_to_add,
+            'quantity_to_add': request.POST.get('quantity_to_add'),
         }
         return render(request, 'myapp/add_quantity_warehouses.html', context)
 
@@ -528,6 +483,8 @@ def add_quantity(request):
                 if quantity_to_add_warehouse and quantity_to_add_warehouse > 0:
                     try:
                         product_warehouse = ProductWarehouse.objects.get(product=product, warehouse=warehouse)
+                        # احفظ الرصيد الحالي قبل الإضافة
+                        stock_before_add = product_warehouse.quantity
                         product_warehouse.quantity += quantity_to_add_warehouse
                         product_warehouse.save()
                         print(f"Added {quantity_to_add_warehouse} to {warehouse.name} for {product.product_name}. New quantity: {product_warehouse.quantity}")
@@ -539,17 +496,29 @@ def add_quantity(request):
                             movement_type='استلام',
                             quantity=quantity_to_add_warehouse,
                             team=product.team,
-                            stock_after_movement=product.quantity # استخدام الكمية الكلية للمنتج
+                            current_stock_at_movement=stock_before_add, # استخدم الرصيد قبل الإضافة
+                            total_stock_at_movement=ProductWarehouse.objects.filter(product=product).aggregate(Sum('quantity'))['quantity__sum'] or Decimal('0.00') # احسب الرصيد الكلي بعد الإضافة
                         )
                         print(f"تم إنشاء حركة استلام لـ {product.product_name} في {warehouse.name} بكمية {quantity_to_add_warehouse}")
                         # === نهاية إنشاء الحركة ===
 
                     except ProductWarehouse.DoesNotExist:
                         ProductWarehouse.objects.create(product=product, warehouse=warehouse, quantity=quantity_to_add_warehouse)
+                        # في حالة الإنشاء، الرصيد قبل الإضافة كان صفر
+                        Movement.objects.create(
+                            product=product,
+                            warehouse=warehouse,
+                            movement_type='استلام',
+                            quantity=quantity_to_add_warehouse,
+                            team=product.team,
+                            current_stock_at_movement=Decimal('0.00'),
+                            total_stock_at_movement=ProductWarehouse.objects.filter(product=product).aggregate(Sum('quantity'))['quantity__sum'] or Decimal('0.00')
+                        )
                         print(f"Created {product.product_name} in {warehouse.name} with quantity: {quantity_to_add_warehouse}")
 
                     added_quantity += quantity_to_add_warehouse
 
+            # تحديث الكمية الكلية للمنتج بعد معالجة كل المخازن
             total_quantity = Decimal('0.00')
             for pw in product.productwarehouse_set.all():
                 total_quantity += pw.quantity

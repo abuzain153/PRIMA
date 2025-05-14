@@ -1,10 +1,9 @@
 from django.db import models
-# from django.db.models.signals import post_save
-# from django.dispatch import receiver
-from django.contrib.auth.models import User  # استورد موديل User
-from django.contrib.auth.models import Group # استورد موديل Group
-from django.utils.translation import gettext_lazy as _ # استورد دالة الترجمة
+from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
+from django.utils.translation import gettext_lazy as _
 from decimal import Decimal
+from django.db.models import Sum
 
 class Warehouse(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name=_('اسم المخزن'))
@@ -15,12 +14,12 @@ class Warehouse(models.Model):
 class Product(models.Model):
     product_name = models.CharField(max_length=255, verbose_name=_('اسم المنتج'))
     product_code = models.CharField(max_length=50, unique=True, verbose_name=_('رمز المنتج'))
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), verbose_name=_('الكمية الكلية')) # استخدم DecimalField
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), verbose_name=_('الكمية الكلية'))
     unit = models.CharField(max_length=50, verbose_name=_('الوحدة'))
-    min_stock = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('الحد الأدنى للمخزون')) # استخدم DecimalField
+    min_stock = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('الحد الأدنى للمخزون'))
     team = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='products', null=True, blank=True, verbose_name=_('الفريق'))
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products_added_by', verbose_name=_('المستخدم')) # حقل المستخدم
-    warehouses = models.ManyToManyField(Warehouse, through='ProductWarehouse', related_name='products', verbose_name=_('المخازن')) # استخدام الموديل الوسيط
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products_added_by', verbose_name=_('المستخدم'))
+    warehouses = models.ManyToManyField(Warehouse, through='ProductWarehouse', related_name='products', verbose_name=_('المخازن'))
     formatted_quantity_display = models.CharField(max_length=50, blank=True, null=True)
     formatted_min_stock_display = models.CharField(max_length=50, blank=True, null=True)
 
@@ -36,7 +35,7 @@ class Product(models.Model):
 
     def save(self, *args, **kwargs):
         self.formatted_quantity_display = self._format_decimal(self.quantity)
-        self.formatted_min_stock_display = self._format_decimal(self.min_stock) # نسق الحد الأدنى كمان
+        self.formatted_min_stock_display = self._format_decimal(self.min_stock)
         super().save(*args, **kwargs)
 
 class ProductWarehouse(models.Model):
@@ -45,7 +44,7 @@ class ProductWarehouse(models.Model):
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     class Meta:
-        unique_together = ('product', 'warehouse') # عشان المنتج ميكونش متكرر في نفس المخزن
+        unique_together = ('product', 'warehouse')
 
     def __str__(self):
         return f"{self.product.product_name} في {self.warehouse.name}: {self.quantity}"
@@ -56,13 +55,15 @@ class Movement(models.Model):
         ('سحب', 'سحب'),
     )
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=_('المنتج'))
-    warehouse = models.ForeignKey(Warehouse, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_('المخزن')) # حقل المخزن
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_('المخزن'))
     movement_type = models.CharField(max_length=50, choices=MOVEMENT_TYPES, verbose_name=_('نوع الحركة'))
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('الكمية')) # استخدم DecimalField هنا
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('الكمية'))
     date = models.DateTimeField(auto_now_add=True, verbose_name=_('التاريخ'))
     quantity_after = models.FloatField(null=True, blank=True, verbose_name=_('الكمية بعد الحركة'))
-    stock_after_movement = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name=_('الكمية بالمخزون بعد الحركة')) # الحقل الجديد
-    team = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='movements', null=True, blank=True, verbose_name=_('الفريق')) # حقل الفريق الجديد
+    stock_after_movement = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name=_('الكمية بالمخزون بعد الحركة'))
+    team = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='movements', null=True, blank=True, verbose_name=_('الفريق'))
+    current_stock_at_movement = models.IntegerField(null=True, blank=True, verbose_name=_("الرصيد الحالي بالمخزن وقت الحركة"))
+    total_stock_at_movement = models.IntegerField(null=True, blank=True, verbose_name=_("الرصيد الكلي وقت الحركة"))
 
     def __str__(self):
         return f"{self.product.product_name} - {self.movement_type} - {self.quantity} في {self.warehouse}"
@@ -70,8 +71,19 @@ class Movement(models.Model):
     def save(self, *args, **kwargs):
         if self.movement_type == "سحب" and self.quantity > (self.product.productwarehouse_set.filter(warehouse=self.warehouse).first().quantity if self.warehouse else 0):
             raise ValueError("الكمية المسحوبة أكبر من المخزون المتوفر في هذا المخزن.")
+
+        # تسجيل لقطة من أرصدة المخزون فقط عند إنشاء حركة جديدة
+        if not self.pk:
+            if self.warehouse:
+                product_warehouse = ProductWarehouse.objects.filter(product=self.product, warehouse=self.warehouse).first()
+                self.current_stock_at_movement = int(product_warehouse.quantity) if product_warehouse else 0
+            else:
+                self.current_stock_at_movement = 0
+
+            total_stock = ProductWarehouse.objects.filter(product=self.product).aggregate(Sum('quantity'))['quantity__sum'] or 0
+            self.total_stock_at_movement = int(total_stock)
+
         super().save(*args, **kwargs)
-        # مش هنحسب stock_after_movement هنا، هنحسبها في الـ Views
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('المستخدم'))
@@ -82,14 +94,13 @@ class Notification(models.Model):
             ('new_product', 'New Product'),
             ('quantity_added', 'Quantity Added'),
             ('quantity_withdrawn', 'Quantity Withdrawn'),
-            # ... أنواع إشعارات تانية ممكن تضيفها
         ],
         verbose_name=_('نوع الإشعار')
     )
     message = models.TextField(verbose_name=_('الرسالة'))
     is_read = models.BooleanField(default=False, verbose_name=_('مقروء'))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('تاريخ الإنشاء'))
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_('المنتج')) # ربط اختياري بالمنتج
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_('المنتج'))
 
     def __str__(self):
         return f"إشعار لـ {self.user.username}: {self.get_notification_type_display()}"
@@ -102,5 +113,4 @@ class Notification(models.Model):
         ('new_product', 'New Product'),
         ('quantity_added', 'Quantity Added'),
         ('quantity_withdrawn', 'Quantity Withdrawn'),
-        # ... نفس أنواع الإشعارات اللي في حقل choices
     ]
