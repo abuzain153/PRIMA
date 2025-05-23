@@ -69,12 +69,17 @@ class Movement(models.Model):
         return f"{self.product.product_name} - {self.movement_type} - {self.quantity} في {self.warehouse}"
 
     def save(self, *args, **kwargs):
-        if self.movement_type == "سحب" and self.quantity > (self.product.productwarehouse_set.filter(warehouse=self.warehouse).first().quantity if self.warehouse else 0):
-            raise ValueError("الكمية المسحوبة أكبر من المخزون المتوفر في هذا المخزن.")
+        # *** هذا هو السطر الذي يجب حذفه أو تعليقه (هو السطر 73 في ملفك) ***
+        # if self.movement_type == "سحب" and self.quantity > (self.product.productwarehouse_set.filter(warehouse=self.warehouse).first().quantity if self.warehouse else 0):
+        #     raise ValueError("الكمية المسحوبة أكبر من المخزون المتوفر في هذا المخزن.")
 
         # تسجيل لقطة من أرصدة المخزون فقط عند إنشاء حركة جديدة
-        if not self.pk:
+        # تأكد من أن هذا المنطق يعتمد على حالة الكمية قبل التغيير إذا كنت تريد ذلك
+        # أو بعد التغيير إذا كان هذا هو المقصود بالـ "snapshot"
+        if not self.pk: # هذا يعني أن الكائن يتم حفظه لأول مرة (إنشاء جديد)
             if self.warehouse:
+                # إذا كنت تريد الكمية قبل السحب، يجب عليك تمريرها من الـ view
+                # أو جلبها هنا قبل أن يتم حفظ product_warehouse
                 product_warehouse = ProductWarehouse.objects.filter(product=self.product, warehouse=self.warehouse).first()
                 self.current_stock_at_movement = int(product_warehouse.quantity) if product_warehouse else 0
             else:
