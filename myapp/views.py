@@ -76,40 +76,43 @@ def index(request):
 
 
 
-class ProductListView(ListView):
-    model = Product
-    template_name = 'myapp/product_list.html'
-    context_object_name = 'products'
-
-    def get_queryset(self):
-        # جيب كل المجموعات اللي طارق أو أي مستخدم فيها
-        user_groups = self.request.user.groups.all()
-        # جيب المنتجات المرتبطة بأي من هاي المجموعات
-        queryset = Product.objects.filter(team__in=user_groups)
-        print(f"عدد المنتجات المرتبطة بمجموعات المستخدم {self.request.user.username}: {queryset.count()}")
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        low_stock_products = self.get_queryset().filter(quantity__lt=F('min_stock'))
-        context['low_stock_products'] = low_stock_products
-        return context
-
 class ProductListView(LoginRequiredMixin, ListView):
     model = Product
     template_name = 'myapp/product_list.html'
     context_object_name = 'products'
-    ordering = ['-id']
+    ordering = ['-id'] # ترتيب المنتجات تنازلياً حسب الـ ID (الأحدث أولاً)
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(user=self.request.user)
+        # جلب المجموعات التي ينتمي إليها المستخدم الحالي
+        user_groups = self.request.user.groups.all()
+
+        # فلترة المنتجات بناءً على المجموعات التي ينتمي إليها المستخدم
+        # (يفترض وجود حقل 'team' في موديل Product يرتبط بـ Group)
+        queryset = Product.objects.filter(team__in=user_groups)
+
+        # تطبيق منطق البحث المدمج
         search_term = self.request.GET.get('search')
         if search_term:
             queryset = queryset.filter(
                 models.Q(product_name__icontains=search_term) |
                 models.Q(product_code__icontains=search_term)
             )
+
+        # تطبيق الترتيب المحدد
+        queryset = queryset.order_by(*self.ordering)
+
         return queryset
+
+    def get_context_data(self, **kwargs):
+        # استدعاء الدالة الأصلية للحصول على الـ context الأساسي
+        context = super().get_context_data(**kwargs)
+
+        # فلترة المنتجات قليلة المخزون من الـ queryset الذي تم جلبه
+        # (يفترض وجود حقل 'min_stock' في موديل Product)
+        low_stock_products = self.get_queryset().filter(quantity__lt=F('min_stock'))
+        context['low_stock_products'] = low_stock_products
+
+        return context
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
