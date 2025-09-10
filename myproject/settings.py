@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from decouple import config  # لإحضار القيم من ملف .env
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,8 +23,6 @@ INSTALLED_APPS = [
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
-
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,10 +56,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
+# إعدادات قاعدة البيانات PostgreSQL باستخدام python-decouple
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT', default='5432'),
     }
 }
 
@@ -117,4 +121,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'abuzain186@gmail.com'
 EMAIL_HOST_PASSWORD = 'xbtd bqnh rstb adzq'  # **ضع كلمة المرور هنا!**
 
-DEFAULT_FROM_EMAIL = 'webmaster@yourdomain.com' # ممكن تغير ده لو حابب
+DEFAULT_FROM_EMAIL = 'webmaster@yourdomain.com'  # ممكن تغير ده لو حابب
