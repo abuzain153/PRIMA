@@ -23,12 +23,11 @@ class ProductForm(forms.ModelForm):
         label=_('الكمية الكلية المتاحة'),
         widget=forms.NumberInput(attrs={'step': 'any'}),
         required=False,
-        decimal_places=2  # هنخليها عشان الداتا تتخزن بخانتين
+        decimal_places=2
     )
     unit = forms.CharField(label=_('الوحدة'))
     min_stock = forms.IntegerField(label=_('الحد الأدنى للمخزون'))
-    # هنشيل warehouses_quantities من هنا
-    warehouse_quantities = forms.CharField(widget=forms.HiddenInput(), required=False)  # هنستخدمه لتمرير بيانات الكميات
+    warehouse_quantities = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, selected_warehouses=None, initial_quantities=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -36,7 +35,6 @@ class ProductForm(forms.ModelForm):
         if initial_quantities is None:
             initial_quantities = {}
 
-        # لو فيه مخازن مختارة، هنعرض ليها خانات كمية
         if selected_warehouses:
             for warehouse_id in selected_warehouses:
                 try:
@@ -50,9 +48,8 @@ class ProductForm(forms.ModelForm):
                     )
                     self.warehouse_fields[warehouse.id] = field_name
                 except Warehouse.DoesNotExist:
-                    pass  # ممكن نعالج دي بطريقة تانية لو ضروري
+                    pass
         else:
-            # لما بنعدل منتج موجود، نعرض كل خانات المخازن مع قيمها
             if self.instance.pk:
                 product_warehouses = ProductWarehouse.objects.filter(product=self.instance)
                 initial_quantities = {pw.warehouse_id: pw.quantity for pw in product_warehouses}
@@ -157,18 +154,14 @@ class WithdrawQuantityFromWarehousesForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         total_withdrawn = Decimal('0.0')
-        for name, value in cleaned_data.items():  # هنلف على الـ items عشان نوصل للاسم والقيمة
+        for name, value in cleaned_data.items():
             if name.startswith('warehouse_'):
                 if value is not None:
                     try:
                         total_withdrawn += Decimal(str(value))
                     except DecimalException:
                         raise forms.ValidationError(_(f"أدخل قيمة رقمية صحيحة للمخزن {name.split('_')[1]}."))
-
         total_requested = cleaned_data.get('total_quantity_to_withdraw', Decimal('0.0'))
-        print(f"Total Withdrawn (from form): {total_withdrawn}")
-        print(f"Total Requested (from form): {total_requested}")
-
         if total_withdrawn > total_requested:
             raise forms.ValidationError(_("إجمالي الكمية المسحوبة من المخازن يتجاوز الكمية المطلوبة."))
         return cleaned_data
@@ -185,10 +178,16 @@ class RegistrationForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
-        team = self.cleaned_data['team']
+        team = self.cleaned_data.get('team')
+
         if commit:
             user.save()
-            user.groups.add(team)
+            if team:
+                user.groups.add(team)
+            else:
+                default_team = Group.objects.filter(name="فريق المواد الخام").first()
+                if default_team:
+                    user.groups.add(default_team)
         return user
 
 
@@ -221,7 +220,7 @@ class AddQuantityToWarehousesForm(forms.Form):
                     min_value=Decimal('0.00'),
                     decimal_places=2,
                     required=False,
-                    initial=None  # <--- القيمة الصحيحة هي None
+                    initial=None
                 )
 
     def clean(self):
