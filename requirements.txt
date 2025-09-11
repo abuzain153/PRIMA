@@ -26,3 +26,4 @@ django-crispy-forms
 crispy-bootstrap5
 xlsxwriter
 python-decouple
+psycopg2-binary
