@@ -23,11 +23,18 @@ class ProductForm(forms.ModelForm):
         label=_('الكمية الكلية المتاحة'),
         widget=forms.NumberInput(attrs={'step': 'any'}),
         required=False,
-        decimal_places=2
+        decimal_places=2,
+        min_value=Decimal('0.00')
     )
     unit = forms.CharField(label=_('الوحدة'))
-    min_stock = forms.IntegerField(label=_('الحد الأدنى للمخزون'))
+    min_stock = forms.DecimalField(
+        label=_('الحد الأدنى للمخزون'),
+        decimal_places=2,
+        min_value=Decimal('0.01'),
+        widget=forms.NumberInput(attrs={'step': 'any'})
+    )
     warehouse_quantities = forms.CharField(widget=forms.HiddenInput(), required=False)
+
 
     def __init__(self, *args, selected_warehouses=None, initial_quantities=None, **kwargs):
         super().__init__(*args, **kwargs)
