@@ -58,7 +58,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('username', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}), 
         ('Team', {'fields': ('team',)}),
     )
     add_fieldsets = (
@@ -101,23 +101,25 @@ class ProductAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
-
         if request.user.groups.exists():
             user_group = request.user.groups.first()
             if user_group and user_group.name == "فريق المواد الخام":
                 return qs.filter(team=user_group)
-
             elif user_group and user_group.name == "فريق الصيانة":
                 return qs.filter(team=user_group)
-
         return qs.none()
 
-    # تعديل reset_quantity لحفظ كل عنصر باستخدام save()
+    # تعديل reset_quantity لحفظ كل عنصر باستخدام save وإعادة تعيين المخازن
     def reset_quantity(self, request, queryset):
-        for obj in queryset:
-            obj.quantity = 0
-            obj.save()
-        self.message_user(request, "تم إعادة تعيين الكمية إلى 0.")
+        for product in queryset:
+            # إعادة تعيين الكمية في المنتج نفسه
+            product.quantity = 0
+            product.save()
+            
+            # إعادة تعيين الكمية في كل المخازن المرتبطة بهذا المنتج
+            Warehouse.objects.filter(product=product).update(quantity=0)
+            
+        self.message_user(request, "تم إعادة تعيين الكمية في المنتج والمخازن إلى 0.")
     reset_quantity.short_description = "إعادة تعيين الكمية"
 
 
