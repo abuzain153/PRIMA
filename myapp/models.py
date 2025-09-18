@@ -14,9 +14,9 @@ class Warehouse(models.Model):
 class Product(models.Model):
     product_name = models.CharField(max_length=255, verbose_name=_('اسم المنتج'))
     product_code = models.CharField(max_length=50, unique=True, verbose_name=_('رمز المنتج'))
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), verbose_name=_('الكمية الكلية'))
+    quantity = models.DecimalField(max_digits=10, decimal_places=4, default=Decimal('0.0000'), verbose_name=_('الكمية الكلية'))
     unit = models.CharField(max_length=50, verbose_name=_('الوحدة'))
-    min_stock = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('الحد الأدنى للمخزون'))
+    min_stock = models.DecimalField(max_digits=10, decimal_places=4, verbose_name=_('الحد الأدنى للمخزون'))
     team = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='products', null=True, blank=True, verbose_name=_('الفريق'))
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products_added_by', verbose_name=_('المستخدم'))
     warehouses = models.ManyToManyField(Warehouse, through='ProductWarehouse', related_name='products', verbose_name=_('المخازن'))
@@ -27,11 +27,11 @@ class Product(models.Model):
         return self.product_name
 
     def _format_decimal(self, value):
-        decimal_value = Decimal(str(value)).quantize(Decimal('0.00'))
+        decimal_value = Decimal(str(value)).quantize(Decimal('0.0000'))
         if decimal_value == decimal_value.to_integral_value():
             return str(decimal_value.to_integral_value())
         else:
-            return format(decimal_value, '.2f')
+            return format(decimal_value, '.4f')
 
     def save(self, *args, **kwargs):
         self.formatted_quantity_display = self._format_decimal(self.quantity)
@@ -41,7 +41,7 @@ class Product(models.Model):
 class ProductWarehouse(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=_('المنتج'))
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, verbose_name=_('المخزن'))
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    quantity = models.DecimalField(max_digits=10, decimal_places=4, default=0.0000)
 
     class Meta:
         unique_together = ('product', 'warehouse')
@@ -57,10 +57,10 @@ class Movement(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=_('المنتج'))
     warehouse = models.ForeignKey(Warehouse, on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_('المخزن'))
     movement_type = models.CharField(max_length=50, choices=MOVEMENT_TYPES, verbose_name=_('نوع الحركة'))
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('الكمية'))
+    quantity = models.DecimalField(max_digits=10, decimal_places=4, verbose_name=_('الكمية'))
     date = models.DateTimeField(auto_now_add=True, verbose_name=_('التاريخ'))
     quantity_after = models.FloatField(null=True, blank=True, verbose_name=_('الكمية بعد الحركة'))
-    stock_after_movement = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name=_('الكمية بالمخزون بعد الحركة'))
+    stock_after_movement = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, verbose_name=_('الكمية بالمخزون بعد الحركة'))
     team = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='movements', null=True, blank=True, verbose_name=_('الفريق'))
     current_stock_at_movement = models.IntegerField(null=True, blank=True, verbose_name=_("الرصيد الحالي بالمخزن وقت الحركة"))
     total_stock_at_movement = models.IntegerField(null=True, blank=True, verbose_name=_("الرصيد الكلي وقت الحركة"))
