@@ -110,7 +110,7 @@ class ProductAdmin(admin.ModelAdmin):
         return qs.none()
 
     # تعديل reset_quantity لحفظ كل عنصر باستخدام save وإعادة تعيين المخازن
-    def reset_quantity(self, request, queryset):
+  def reset_quantity(self, request, queryset):
     for product in queryset:
         # إعادة تعيين الكمية في المنتج نفسه
         product.quantity = 0
@@ -121,6 +121,7 @@ class ProductAdmin(admin.ModelAdmin):
         
     self.message_user(request, "تم إعادة تعيين الكمية في المنتج والمخازن إلى 0.")
 reset_quantity.short_description = "إعادة تعيين الكمية"
+
 
 
 
