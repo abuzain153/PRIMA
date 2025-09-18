@@ -63,8 +63,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'first_name', 'last_name', 'password', 'password2', 'team')}
-        ),
+            'fields': ('username', 'email', 'first_name', 'last_name', 'password', 'password2', 'team')})
     )
     search_fields = ('username', 'first_name', 'last_name', 'email')
     ordering = ('username',)
@@ -118,6 +117,9 @@ class ProductAdmin(admin.ModelAdmin):
             # إعادة تعيين الكمية في كل المخازن المرتبطة بالمنتج عبر ProductWarehouse
             ProductWarehouse.objects.filter(product=product).update(quantity=0)
             
+            # إزالة أي علاقة لمخازن صار فيها الكمية صفر
+            product.warehouses.clear()
+
         self.message_user(request, "تم إعادة تعيين الكمية في المنتج والمخازن إلى 0.")
     reset_quantity.short_description = "إعادة تعيين الكمية"
 
