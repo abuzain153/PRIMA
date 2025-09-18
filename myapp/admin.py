@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Warehouse, Movement
+from .models import Product, Warehouse, Movement, ProductWarehouse
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django import forms
@@ -35,14 +35,13 @@ class CustomUserChangeForm(UserChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance.pk:
-            # تعيين القيمة الأولية لحقل الفريق بناءً على مجموعة المستخدم
             self.fields['team'].initial = self.instance.groups.first()
 
     def save(self, commit=True):
         user = super().save(commit=False)
         if commit:
             user.save()
-            user.groups.clear()  # امسح المجموعات القديمة
+            user.groups.clear()
             if self.cleaned_data['team']:
                 user.groups.add(self.cleaned_data['team'])
         return user
@@ -90,7 +89,7 @@ class ProductAdmin(admin.ModelAdmin):
     actions = ['reset_quantity']
 
     def formatted_quantity(self, obj):
-        if obj.unit == 'יח\'':  # إذا كانت الوحدة 'יח'
+        if obj.unit == 'יח\'':  
             return format_html("{}", int(obj.quantity))
         else:
             return format_html("{}", obj.quantity)
@@ -109,20 +108,18 @@ class ProductAdmin(admin.ModelAdmin):
                 return qs.filter(team=user_group)
         return qs.none()
 
-    # تعديل reset_quantity لحفظ كل عنصر باستخدام save وإعادة تعيين المخازن
-  def reset_quantity(self, request, queryset):
-    for product in queryset:
-        # إعادة تعيين الكمية في المنتج نفسه
-        product.quantity = 0
-        product.save()
-        
-        # إعادة تعيين الكمية في كل المخازن المرتبطة بهذا المنتج عبر ProductWarehouse
-        ProductWarehouse.objects.filter(product=product).update(quantity=0)
-        
-    self.message_user(request, "تم إعادة تعيين الكمية في المنتج والمخازن إلى 0.")
-reset_quantity.short_description = "إعادة تعيين الكمية"
-
-
+    # دالة reset_quantity داخل الـ ProductAdmin
+    def reset_quantity(self, request, queryset):
+        for product in queryset:
+            # إعادة تعيين الكمية في المنتج نفسه
+            product.quantity = 0
+            product.save()
+            
+            # إعادة تعيين الكمية في كل المخازن المرتبطة بالمنتج عبر ProductWarehouse
+            ProductWarehouse.objects.filter(product=product).update(quantity=0)
+            
+        self.message_user(request, "تم إعادة تعيين الكمية في المنتج والمخازن إلى 0.")
+    reset_quantity.short_description = "إعادة تعيين الكمية"
 
 
 @admin.register(Movement)
