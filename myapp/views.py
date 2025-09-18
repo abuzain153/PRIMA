@@ -880,45 +880,55 @@ def get_product_by_barcode(request):
         return JsonResponse({'error': 'لم يتم إرسال رقم الباركود'}, status=400)
 @login_required
 def export_excel(request):
-    products = Product.objects.filter(user=request.user).prefetch_related('warehouses')
+    # جلب كل المنتجات للمستخدم
+    products = Product.objects.filter(user=request.user)
+    
+    # جلب كل المخازن
     warehouse_names = sorted(list(Warehouse.objects.values_list('name', flat=True)))
+
+    # جلب كل بيانات ProductWarehouse مرة واحدة لتقليل الاستعلامات
+    pw_list = ProductWarehouse.objects.select_related('product', 'warehouse').all()
+    
+    # تنظيم البيانات في dictionary لتسهيل البحث
+    pw_dict = {}
+    for pw in pw_list:
+        pw_dict[(pw.product_id, pw.warehouse.name)] = float(pw.quantity)
 
     rows = []
     for product in products:
         row = {
-            _('اسم المنتج'): product.product_name,
-            _('رمز المنتج'): product.product_code,
-            _('الوحدة'): product.unit,
-            _('الحد الأدنى'): float(product.min_stock),
+            'اسم المنتج': product.product_name,
+            'رمز المنتج': product.product_code,
+            'الوحدة': product.unit,
+            'الحد الأدنى': float(product.min_stock),
         }
 
         total_quantity = 0
         for warehouse_name in warehouse_names:
-            pw = ProductWarehouse.objects.filter(product=product, warehouse__name=warehouse_name).first()
-            quantity = float(pw.quantity) if pw else 0
+            quantity = pw_dict.get((product.id, warehouse_name), 0)
             row[warehouse_name] = quantity
             total_quantity += quantity
 
-        row[_('الكمية الكلية')] = total_quantity
+        row['الكمية الكلية'] = total_quantity
         rows.append(row)
 
-    final_columns = [_('اسم المنتج'), _('رمز المنتج'), _('الوحدة'), _('الحد الأدنى')] + warehouse_names + [_('الكمية الكلية')]
+    # ترتيب الأعمدة
+    final_columns = ['اسم المنتج', 'رمز المنتج', 'الوحدة', 'الحد الأدنى'] + warehouse_names + ['الكمية الكلية']
     df = pd.DataFrame(rows, columns=final_columns)
 
-    # تنسيق الأرقام: دائماً خانتين عشريتين
+    # تنسيق الأرقام دائماً خانتين عشريتين
     for col in final_columns[3:]:
         df[col] = df[col].map(lambda x: f"{x:.2f}")
 
-    # إنشاء ملف Excel باستخدام openpyxl
+    # إنشاء ملف Excel
     wb = Workbook()
     ws = wb.active
     ws.title = "المخزون"
 
-    # إضافة بيانات DataFrame
     for r in dataframe_to_rows(df, index=False, header=True):
         ws.append(r)
 
-    # تنسيق الشرط: أي قيمة أقل من الحد الأدنى باللون الأحمر
+    # تنسيق الشرط: أقل من الحد الأدنى باللون الأحمر
     red_fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
     for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=5, max_col=4 + len(warehouse_names)):
         min_stock = float(ws[f'D{row[0].row}'].value)
@@ -926,7 +936,7 @@ def export_excel(request):
             if float(cell.value) < min_stock:
                 cell.fill = red_fill
 
-    # تجهيز Response
+    # Response
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename="inventory.xlsx"'
     wb.save(response)
