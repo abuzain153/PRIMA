@@ -892,7 +892,7 @@ def export_excel(request):
     # تنظيم البيانات في dictionary لتسهيل البحث
     pw_dict = {}
     for pw in pw_list:
-        pw_dict[(pw.product_id, pw.warehouse.name)] = float(pw.quantity)
+        pw_dict[(pw.product_id, pw.warehouse.name)] = pw.quantity  # ترك الرقم كما هو بدون float()
 
     rows = []
     for product in products:
@@ -900,7 +900,7 @@ def export_excel(request):
             'اسم المنتج': product.product_name,
             'رمز المنتج': product.product_code,
             'الوحدة': product.unit,
-            'الحد الأدنى': float(product.min_stock),
+            'الحد الأدنى': product.min_stock,  # ترك الرقم كما هو
         }
 
         total_quantity = 0
@@ -916,10 +916,6 @@ def export_excel(request):
     final_columns = ['اسم المنتج', 'رمز المنتج', 'الوحدة', 'الحد الأدنى'] + warehouse_names + ['الكمية الكلية']
     df = pd.DataFrame(rows, columns=final_columns)
 
-    # تنسيق الأرقام دائماً خانتين عشريتين
-    for col in final_columns[3:]:
-        df[col] = df[col].map(lambda x: f"{x:.2f}")
-
     # إنشاء ملف Excel
     wb = Workbook()
     ws = wb.active
@@ -928,15 +924,9 @@ def export_excel(request):
     for r in dataframe_to_rows(df, index=False, header=True):
         ws.append(r)
 
-    # تنسيق الشرط: أقل من الحد الأدنى باللون الأحمر
-    red_fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
-    for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=5, max_col=4 + len(warehouse_names)):
-        min_stock = float(ws[f'D{row[0].row}'].value)
-        for cell in row:
-            if float(cell.value) < min_stock:
-                cell.fill = red_fill
+    # تم إلغاء تنسيق الشرط (لا لون أحمر) وتم ترك الأرقام كما هي
 
-    # Response
+    # تجهيز Response
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename="inventory.xlsx"'
     wb.save(response)
