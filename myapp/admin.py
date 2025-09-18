@@ -7,14 +7,13 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.utils.html import format_html
 
 
-# إنشاء فورم مخصص للمستخدم عشان نضيف حقل الفريق عند الإنشاء
+# إنشاء فورم مخصص للمستخدم لإضافة حقل الفريق عند الإنشاء
 class CustomUserCreationForm(UserCreationForm):
     team = forms.ModelChoiceField(queryset=Group.objects.all(), required=False, label='الفريق')
 
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'team')
-
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -25,7 +24,7 @@ class CustomUserCreationForm(UserCreationForm):
         return user
 
 
-# إنشاء فورم مخصص للمستخدم عشان نضيف حقل الفريق عند التعديل
+# إنشاء فورم مخصص للمستخدم لإضافة حقل الفريق عند التعديل
 class CustomUserChangeForm(UserChangeForm):
     team = forms.ModelChoiceField(queryset=Group.objects.all(), required=False, label='الفريق')
 
@@ -36,7 +35,7 @@ class CustomUserChangeForm(UserChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance.pk:
-            # قم بتعيين القيمة الأولية لحقل الفريق بناءً على مجموعة المستخدم
+            # تعيين القيمة الأولية لحقل الفريق بناءً على مجموعة المستخدم
             self.fields['team'].initial = self.instance.groups.first()
 
     def save(self, commit=True):
@@ -91,7 +90,7 @@ class ProductAdmin(admin.ModelAdmin):
     actions = ['reset_quantity']
 
     def formatted_quantity(self, obj):
-        if obj.unit == 'יח\'':
+        if obj.unit == 'יח\'':  # إذا كانت الوحدة 'יח'
             return format_html("{}", int(obj.quantity))
         else:
             return format_html("{}", obj.quantity)
@@ -113,8 +112,11 @@ class ProductAdmin(admin.ModelAdmin):
 
         return qs.none()
 
+    # تعديل reset_quantity لحفظ كل عنصر باستخدام save()
     def reset_quantity(self, request, queryset):
-        queryset.update(quantity=0)
+        for obj in queryset:
+            obj.quantity = 0
+            obj.save()
         self.message_user(request, "تم إعادة تعيين الكمية إلى 0.")
     reset_quantity.short_description = "إعادة تعيين الكمية"
 
