@@ -65,11 +65,14 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default='prima_8l72'),
-        'USER': config('DB_USER', default='prima_8l72_user'),
-        'PASSWORD': config('DB_PASSWORD', default='DiE0oU4dflYwmVM7Kp5EKTOXvkQQjZD6'),
-        'HOST': config('DB_HOST', default='dpg-d3tjb0f5r7bs73esddq0-a.oregon-postgres.render.com'),
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
         'PORT': config('DB_PORT', default='5432'),
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
 
