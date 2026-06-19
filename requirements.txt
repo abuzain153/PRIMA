@@ -18,12 +18,11 @@ six==1.17.0
 sqlparse==0.5.3
 tzdata==2025.2
 waitress==3.0.2
-#matplotlib==3.10.1
-dj-static
-freetype-py
+xlsxwriter
+
 django-widget-tweaks
 django-crispy-forms
 crispy-bootstrap5
-xlsxwriter
 python-decouple
-psycopg2-binary
+dj-database-url
+psycopg[binary]
